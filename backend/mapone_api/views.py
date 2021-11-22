@@ -11,9 +11,7 @@ class PublicationView(APIView):
 
         # No params from frontend
         # Display all publications (front page)
-        all_entries = Publication.objects.all()
+        entry = Publication.objects.filter(
+            source="TEST").values()
 
-        # print(all_entries)
-        message = "MapONE backend server connected."
-        response = {message, all_entries}
-        return Response(response)
+        return Response(entry)

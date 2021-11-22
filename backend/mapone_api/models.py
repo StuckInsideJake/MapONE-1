@@ -11,4 +11,4 @@ class Publication(models.Model):
 	publication_info = models.CharField(max_length=100)
 
 	def __str__(self):
-		return self.uri
+		return self.source
