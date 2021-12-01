@@ -1,0 +1,250 @@
+/* Adds background color to the top navigation bar */
+.topnav {
+  background-color: #3b4261;
+  overflow: hidden;
+  padding-right: 30px;
+}
+  
+/* Style for links inside the navigation bar */
+.topnav a {
+  float: right;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  font-family: 'Josefin Sans', sans-serif;
+}
+  
+/* Color of links on hover */
+.topnav a:hover {
+  text-shadow: 0px 0px 25px #ffffff, 0px 5px 10px #ffffff;
+  color: white;
+}
+
+/* Color of links after visited */
+.topnav a:visited {
+  color: white;
+  text-decoration: none;
+}
+  
+/* Hides link that should open and close the topnav on small screens */
+.topnav .icon {
+  display: none;
+}
+
+/* Color of links */
+a:link {
+  color: rgb(0, 191, 255);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+/* Color of links on hover */
+a:hover {
+  color: rgb(154, 0, 168);
+  background-color: transparent;
+}
+
+/* Set font and placement for body text */
+body {
+  text-align: center;
+  color: white;
+  font-family: 'Josefin Sans', sans-serif;
+  background-image: url("galaxy_rocket.jpeg");
+  background-repeat: no-repeat;
+  background-color: black;
+  background-size: 100% auto;
+}
+
+/* Container for main text and first box */
+.container-main {
+  margin: 0%;
+  display: block;
+  padding: 10px;
+  width: auto;
+}
+
+/* Secindary container for main text and first box */
+.container-main-fill {
+  margin: 0%;
+  display: block;
+  padding: 10px;
+  padding-bottom: 50%;
+  width: auto;
+}
+
+.display-header {
+  font-size: 50px;
+}
+
+.display-secondary {
+  font-size: 30px;
+}
+
+.container-secondary {
+  margin: 0%;
+  display: block;
+  padding-top: 480px;
+  padding-bottom: 50px;
+  width: auto;
+}
+
+.container-sponsors {
+  margin: 0%;
+  display: block;
+  padding: 10px;
+  width: auto;
+}
+
+.container-description {
+  max-width: 1080px;
+  display: block;
+  padding: 10px;
+  padding-top: 480px;
+  width: 100%;
+  padding-right: var(--bs-gutter-x, 0.75rem);
+  padding-left: var(--bs-gutter-x, 0.75rem);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.container-filler {
+  margin: 0%;
+  display: block;
+  background-color: #3b4261;
+  padding: 10px;
+  width: auto;
+}
+
+.team-logo {
+  width: 150px;
+  height: 125px;
+  border-radius: 5px;
+}
+
+.team-logo-top{
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  opacity: 50%;
+  float: left;
+  
+}
+
+p {
+  line-height: 1.5rem;
+  font-size: 17px;
+}
+
+.invert-text {
+  color: black;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create four equal columns that sit next to each other */
+.column {
+  float: left;
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+/* Create two equal columns that sit next to each other */
+.column-2 {
+  float: left;
+  flex: 25%;
+  max-width: 75%;
+  padding: 0 4px;
+}
+
+/* Image specifications for the leftmost column */
+.column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
+}
+
+/* Image specifications for the rightmost column */
+.column-2 img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 800px) {
+  .column, .column-2 {
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column, .column-2 {
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
+* {box-sizing: border-box}
+
+/* Container needed to position the overlay. Adjust the width as needed */
+.container-images {
+  display: block;
+  position: relative;
+  padding: 10px;
+  padding-top: 500px;
+  width: auto;
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Container needed to position the overlay. Adjust the width as needed */
+.container-images-2 {
+  display: block;
+  position: relative;
+  padding: 10px;
+  padding-top: 10px;
+  width: auto;
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Make the image to responsive */
+.image {
+  display: block;
+  width: 200px;
+  height: 200px;
+  object-fit: scale-down;
+}
+
+/* The overlay effect - lays on top of the container and over the image */
+.overlay {
+  position: relative;
+  bottom: 35px;
+  background: rgb(0, 0, 0);
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  width: 100%;
+  color: white;
+  font-size: 20px;
+  padding: 10px;
+  text-align: center;
+}
+
+.bullet-list{
+  list-style: circle;
+  text-align: left;
+}
+
+
