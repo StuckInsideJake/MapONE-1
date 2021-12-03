@@ -119,9 +119,19 @@ body {
 }
 
 .figure-images {
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   border-radius: 50px;
+  text-align: center;
+}
+
+.tech-images{
+  width: 150px;
+  height: 50px;
+  border-radius: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 .team-logo {
@@ -250,7 +260,8 @@ p {
 
 .bullet-list{
   list-style: circle;
-  text-align: left;
+  list-style-position: inside;
+  text-align: center;
 }
 
 
