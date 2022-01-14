@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:async_builder/async_builder.dart';
+import 'package:http_requests/http_requests.dart';
 
 Icon SearchIcon = const Icon(Icons.search);
 Widget Bar = const Text("Enter the query for the desired publication");
@@ -27,6 +29,8 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
+
+
   final String title;
 
   @override
@@ -35,6 +39,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  Future<String> consumeApi()
+  async{
+    Response publication = await HttpRequests.get('http://127.0.0.1:8000/');
+
+    return publication.content;
+
+
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -54,29 +66,29 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               setState(() {
                 if(SearchIcon.icon == Icons.search)
-                  {
-                   SearchIcon = const Icon(Icons.cancel);
-                   Bar = const ListTile(
-                       leading: Icon(
-                       Icons.search,
-                       color: Colors.white,
-                       size: 28));
-                   title: TextField( decoration: InputDecoration(
-                   hintText: 'type in journal name...',
-                   hintStyle: TextStyle(
-                   color: Colors.white,
-                   fontSize: 18,
-                       fontStyle: FontStyle.italic)));
-                   border: InputBorder.none;
-                   style: TextStyle(color: Colors.grey);
+                {
+                  SearchIcon = const Icon(Icons.cancel);
+                  Bar = const ListTile(
+                      leading: Icon(
+                          Icons.search,
+                          color: Colors.white,
+                          size: 28));
+                  title: TextField( decoration: InputDecoration(
+                      hintText: 'type in journal name...',
+                      hintStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontStyle: FontStyle.italic)));
+                  border: InputBorder.none;
+                  style: TextStyle(color: Colors.grey);
 
-                    //Db and or Django operations go here
-                  }
+                  //Db and or Django operations go here
+                }
                 else
-                  {
-                   SearchIcon = const Icon(Icons.search);
-                   Bar = const Text("En");
-                  }
+                {
+                  SearchIcon = const Icon(Icons.search);
+                  Bar = const Text("En");
+                }
               });
 
             },
@@ -85,17 +97,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ], // Actions
         centerTitle: true,
 
-          ),
+      ),
 
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Place metadata here',
+            AsyncBuilder<String>(
+              future: consumeApi(),
+              waiting: (context) => Text('Loading...'),
+              builder: (context, value) => Text('$value'),
+              error: (context, error, stackTrace) => Text('Still not loading $error'),
             ),
             Text(
-              "Null"
+                " "
             ),
           ],
         ),
