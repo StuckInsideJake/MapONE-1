@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!---Title--->
+        <title>Team MapONE</title>
+        <!---Favicon--->
+        <link rel="icon" type="image/x-icon" href="../TeamLogo/CS476_Logo_Big.png">
+        <!---CSS Stylesheet--->
+        <link rel="stylesheet" href="../stylesheet.css">
+        <!---Font--->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&display=swap" rel="stylesheet">
+    </head>
+
+    <!---Class for top navigation bar--->
+    <div class="topnav" id="myTopnav">
+        <img src="../TeamLogo/CS476_Logo_Big.png" class="team-logo-top">
+        <a href="../Documentation/index.html">Documentation</a>
+        <a href="../Schedule/index.html">Development Plan</a>
+        <a href="index.html">Our Solution</a>
+        <a href="../index.html">Home</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="fa fa-bars"></i> </a>
+    </div>
+
+    <body class="body">
+
+        <!---Class for container with header--->
+        <div class="container-main">     
+            <h1 class="display-header">
+                About MapONE</h1>
+            <h2 class="display-secondary">
+                <a href="Black-PlanetMap.pdf">Project Overview</a></h2>
+            <h2 class="display-secondary">
+                <a href="https://github.com/samantha-milligan/MapONE.git">Project Repository</a>
+            </h2>
+        </div>
+
+        <!---Class for container holding project documents--->
+        <div class="container-description">
+            <h1>Introduction</h1>
+            <p>The planetary science community develops, collects, and distributes planetary geologic mapping research. This research includes publications presenting mapping work and the development process of new map products. Similar to geologic mapping on Earth, planetary maps identify key features such as craters, canyons, and fault lines on other planets. Scientists use these shared resources within the community for numerous reasons. This includes mapping space exploration sites and learning about the elemental composition of different planets and other related scientific research. The client, the United States Geological Survey (USGS) Planetary Geologic Mapping (PGM) Program, assists the community by developing tools and resources to better access and use planetary data for these purposes. For example, PGM mapped the landing/exploration site for the National Aeronautics and Space Administration&apos;s (NASA&apos;s) Mars 2020 Perseverance Rover mission.</p>
+
+            <h1>Problem</h1>
+            <p>Scientists publish their planetary maps and research either through USGS or various online sources (often in journal articles and conference papers). Because USGS mandates certain map standards, many publications are distributed throughout the internet instead. Nevertheless, these resources are valuable to the client to provide the community with all types of publications. As shown in Figure 1, USGS currently does not have an automated way to collect these existing resources. Overall, the client and the planetary science community lack a single, centralized system for maps published in non-USGS venues.
+            
+            <div>
+            <img src="../ProjectInfo/problem_image.png" class="figure-images-1">
+            </div>
+            <p>Figure 1. Diagram outlining planetary map integration issue.</p>
+
+            <h1>Solution</h1>
+            <p>The envisioned product, MapONE, is a user-friendly interface accessible through the USGS&apos;s website. The interface will display map metadata for a selected region of interest and connect to one database containing non-USGS publications. The project team will also create a web scraper to identify and collect these publications from online sources. Overall, MapONE will allow researchers to access non-USGS map metadata. As shown in Figure 2, the following technologies will be used to create this product:</p>
+
+            <ul class="bullet-list">
+            <li>Graphical User Interface (GUI): A GUI will be used to display map data on a single web application.</li>
+            <li>Web Scraper: The project team will develop a data extraction tool, known as a web scraper, to automatically detect and gather map publication metadata (author, source, region, etc.) from online non-USGS sources.</li>
+            <li>Central Database: MapONE will store publication metadata in one centralized database.</li>
+            <li>Remote Storage and Servers: Cloud computing services can be used to store map data and run the product&apos;s web application.</li>
+            <li>Web Framework: MapONE&apos;s web framework will filter metadata (author, source, region, etc.) from the database using user requests from the GUI.</li>
+            </ul>
+
+            <div>
+            <img src="../ProjectInfo/solution_image.png" class="figure-images-2">
+            </div>
+            <p>Figure 2. MapONE&apos;s solution overiew.</p>
+            
+            <div>
+            <img src="../ProjectInfo/final_product_image.png" class="figure-images-3">
+            </div>
+            <p>Figure 3. Envisioned final product.</p>
+
+            <h1>Technologies</h1>
+            <p><ul class="bullet-list">
+            <li>Flutter: Frontend web-based GUI.</li>
+            
+            <img src="../Technologies/flutter.png" class="tech-images">
+            
+            <li>Keras: Python-based machine learning library used for the web scraper.</li>
+            
+            <img src="../Technologies/keras.png" class="tech-images">
+            
+            <li>Django: Full-stack web framework.</li>
+            
+            <img src="../Technologies/django.png" class="tech-images">
+            
+            <li>PostgreSQL: Database structure.</li>
+            
+            <img src="../Technologies/postgresql.png" class="tech-images">
+            
+            <li>Amazon Web Services (AWS): Used to host the GUI and web framework.</li>
+            <img src="../Technologies/aws.png" class="tech-images">
+            </p>
+            </ul>
+
+            <h1>System Requirements</h1>
+            <p>Users will have access to the following features:<ul class="bullet-list">
+            <li>Login into an account on the USGS website.</li>
+            <li>View and filter planetary map metadata (author, source link, region, etc.).</li>
+            <li>Download all publication entries.</li>
+            <li>View and save search history results.</li>
+            <li>Automate searches periodically.</li>
+            <li>Receive notifications on new publications from automated search results.</li>
+            </p>
+
+        </div>
+
+        <!---Class for bottom of web page, copyright, etc--->
+        <div class="container-filler">
+            <img src="../TeamLogo/CS476_Logo_Big.png" class="team-logo">
+        
+            <p>Team MapONE 2021</p>
+        </div>
+    </body>
+</html>
