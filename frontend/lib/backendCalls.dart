@@ -1,37 +1,25 @@
 import 'dart:convert';
+import 'package:async_builder/async_builder.dart';
+import 'package:flutter/material.dart';
+import 'package:map_one_interface/main.dart';
+import 'package:http_requests/http_requests.dart';
 
-import 'package:http/http.dart' as http;
-
-class backEndCalls
+class backEndCalls extends MyHomePage
 {
-  // defualt constructor
-  backEndCalls()
-  {}
-
-  //
-  void consumeApi()
-   async {
-     var client = http.Client();
-     try {
-       var response = await client.post(
-           // once Django is running on a server other than local host this will change
-           Uri.https('127.0.1', 'whatsit/create'),
-           body: {'source': 'link', 'body': 'publication info'});
-       var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-       var uri = Uri.parse(decodedResponse['uri'] as String);
-
-   } finally {
-   client.close();
-   }
-   }
 
 
+  String title = "aloha";
+
+  backEndCalls(this.title) : super(title: title)
+    {
+
+    }
 
 
+  Future<String> consumeApi()
+  async{
+    Response publication = await HttpRequests.get('http://127.0.0.1:8000/');
 
-
-
-
-
-
+    return publication.content;
+  }
 }

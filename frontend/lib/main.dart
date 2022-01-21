@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:async_builder/async_builder.dart';
 import 'package:http_requests/http_requests.dart';
+import 'package:map_one_interface/backendCalls.dart';
 
 Icon SearchIcon = const Icon(Icons.search);
 Widget Bar = const Text("Enter the query for the desired publication");
@@ -27,25 +28,38 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+
+  // init constructor
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
+  // def const
+  MyHomePage.withoutTitle()
+    {
+
+    }
 
 
-  final String title;
 
+  String title = "Map One Alpha";
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  Future<String> consumeApi()
-  async{
-    Response publication = await HttpRequests.get('http://127.0.0.1:8000/');
-
-    return publication.content;
+  static String title = "Map One Alpha";
+  var backendConsume = new backEndCalls(title).consumeApi();
 
 
+  AsyncBuilder<String> fetchApiData()
+  {
+
+    return AsyncBuilder<String>(
+      future: backendConsume,
+      waiting: (context) => Text('Loading...'),
+      builder: (context, value) => Text('$value'),
+      error: (context, error, stackTrace) => Text('Still not loading $error'),
+    );
   }
 
   void _incrementCounter() {
@@ -58,7 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: Bar,
         automaticallyImplyLeading: false,
         actions: [
@@ -90,25 +103,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   Bar = const Text("En");
                 }
               });
-
             },
             icon: SearchIcon,
           )
         ], // Actions
         centerTitle: true,
-
       ),
-
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            AsyncBuilder<String>(
-              future: consumeApi(),
-              waiting: (context) => Text('Loading...'),
-              builder: (context, value) => Text('$value'),
-              error: (context, error, stackTrace) => Text('Still not loading $error'),
-            ),
+            fetchApiData(),
             Text(
                 " "
             ),
