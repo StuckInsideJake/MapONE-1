@@ -53,7 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   AsyncBuilder<String> fetchApiData()
   {
-
     return AsyncBuilder<String>(
       future: backendConsume,
       waiting: (context) => Text('Loading...'),
@@ -113,11 +112,59 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            fetchApiData(),
-            Text(
-                " "
+            DataTable(
+              columns: const <DataColumn>[
+                DataColumn(
+                  label: Text("Source",
+                  style: TextStyle(fontStyle: FontStyle.italic),
+
+                  ),
+                ),
+                DataColumn(
+                  label: Text("Link",
+                  style: TextStyle(fontStyle: FontStyle.italic),
+
+                ),
+                ),
+                DataColumn(
+                  label: Text("Body",
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ),
+                DataColumn(
+                  label: Text("Scale",
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ),
+                DataColumn(
+                  label: Text("Author",
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ),
+                DataColumn(
+                  label: Text("Publication Info",
+                    style: TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ),
+              ],
+              rows: const <DataRow>[
+                DataRow(
+                  cells: <DataCell>[
+                    DataCell(Text("NASA")),
+                    DataCell(Text("NASA.gov")),
+                    DataCell(Text("Mars")),
+                    DataCell(Text("Null")),
+                    DataCell(Text("Shakesphere")),
+                    DataCell(Text("Null")),
+
+                  ]
+                ),
+
+              ],
             ),
-          ],
+
+            ]
+          //],
         ),
       ),
       floatingActionButton: FloatingActionButton(
