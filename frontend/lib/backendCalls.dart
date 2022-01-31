@@ -6,9 +6,10 @@ import 'package:http_requests/http_requests.dart';
 
 class backEndCalls extends MyHomePage
 {
+  String title = "MapOne";
+  //String inData;
 
 
-  String title = "aloha";
 
   backEndCalls(this.title) : super(title: title)
     {
@@ -16,10 +17,15 @@ class backEndCalls extends MyHomePage
     }
 
 
-  Future<String> consumeApi()
-  async{
-    Response publication = await HttpRequests.get('http://127.0.0.1:8000/');
 
-    return publication.content;
-  }
+
+  Future<String> consumeApi()
+  async
+     {
+      Response publication = await HttpRequests.get('http://127.0.0.1:8000/');
+      return publication.content;
+     }
 }
+
+
+

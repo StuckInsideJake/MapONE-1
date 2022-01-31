@@ -30,15 +30,13 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
 
   // init constructor
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  MyHomePage({Key? key, inData, required this.title}) : super(key: key);
 
   // def const
-  MyHomePage.withoutTitle()
+  MyHomePage2()
     {
 
     }
-
-
 
   String title = "Map One Alpha";
   @override
@@ -48,7 +46,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   static String title = "Map One Alpha";
-  var backendConsume = new backEndCalls(title).consumeApi();
+  var backendConsume = new backEndCalls(title,).consumeApi();
 
 
   AsyncBuilder<String> fetchApiData()
@@ -60,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
       error: (context, error, stackTrace) => Text('Still not loading $error'),
     );
   }
+
+
 
   void _incrementCounter() {
     setState(() {
@@ -159,6 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   ]
                 ),
+
+
 
               ],
             ),
