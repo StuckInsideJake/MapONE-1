@@ -22,8 +22,13 @@ environment:
 
 dependencies:
   flutter:
+
     sdk: flutter
   dio: ^4.0.3
+  http_requests: ^1.2.0
+  async_builder: ^1.2.0
+
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -39,6 +44,11 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+
+  assets:
+    - assets/images/
+
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

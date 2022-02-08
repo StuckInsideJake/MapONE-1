@@ -1,17 +1,23 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:async_builder/async_builder.dart';
 import 'package:http_requests/http_requests.dart';
 import 'package:map_one_interface/backendCalls.dart';
+import 'package:map_one_interface/user.dart';
+
+import 'data.dart';
 
 Icon SearchIcon = const Icon(Icons.search);
+Icon FaceIcon = const Icon(Icons.face);
+Icon HomeIcon = const Icon(Icons.home);
 Widget Bar = const Text("Enter the query for the desired publication");
 
 
 void main() {
-  runApp(MyApp());
+  runApp(MapOne());
 }
 
-class MyApp extends StatelessWidget {
+class MapOne extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -22,50 +28,36 @@ class MyApp extends StatelessWidget {
 
         primaryColor: Colors.black,
       ),
-      home: MyHomePage(title: 'MapOne Demo'),
+      home: MapOneHomePage(title: 'MapOne Demo'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MapOneHomePage extends StatefulWidget {
 
   // init constructor
-  MyHomePage({Key? key, inData, required this.title}) : super(key: key);
+  MapOneHomePage({Key? key, inData, required this.title}) : super(key: key);
 
-  // def const
-  MyHomePage2()
+  // empty constructor
+  MapOneHomePage2()
     {
 
     }
 
   String title = "Map One Alpha";
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MapOneHomePageState createState() => _MapOneHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MapOneHomePageState extends State<MapOneHomePage> {
 
   static String title = "Map One Alpha";
-  var backendConsume = new backEndCalls(title,).consumeApi();
 
-
-  AsyncBuilder<String> fetchApiData()
-  {
-    return AsyncBuilder<String>(
-      future: backendConsume,
-      waiting: (context) => Text('Loading...'),
-      builder: (context, value) => Text('$value'),
-      error: (context, error, stackTrace) => Text('Still not loading $error'),
-    );
-  }
+  var backendConsume = new backEndCalls(title).consumeApi();
+  DataRow dataRowObj = new data(title).populateDataRows();
 
 
 
-  void _incrementCounter() {
-    setState(() {
-
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             onPressed: () {
               setState(() {
+
                 if(SearchIcon.icon == Icons.search)
                 {
                   SearchIcon = const Icon(Icons.cancel);
@@ -94,16 +87,45 @@ class _MyHomePageState extends State<MyHomePage> {
                   border: InputBorder.none;
                   style: TextStyle(color: Colors.grey);
 
-                  //Db and or Django operations go here
                 }
                 else
                 {
                   SearchIcon = const Icon(Icons.search);
-                  Bar = const Text("En");
+                  Bar = const Text("Enter your query");
                 }
               });
             },
             icon: SearchIcon,
+          ),
+          IconButton(
+            onPressed:
+          ()
+            {
+              // in order to change view, first the current
+              // rendered context must be popped and then the
+              // new one must be pushed onto the build stack
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder:
+                  (context) => user()));
+
+            },
+
+            icon: FaceIcon,
+            ),
+          IconButton(
+            onPressed:
+                ()
+            {
+              // in order to change view, first the current
+              // rendered context must be popped and then the
+              // new one must be pushed onto the build stack
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder:
+                  (context) => MapOne() ));
+
+            },
+
+            icon:HomeIcon,
           )
         ], // Actions
         centerTitle: true,
@@ -147,22 +169,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ],
-              rows: const <DataRow>[
-                DataRow(
-                  cells: <DataCell>[
-                    DataCell(Text("NASA")),
-                    DataCell(Text("NASA.gov")),
-                    DataCell(Text("Mars")),
-                    DataCell(Text("Null")),
-                    DataCell(Text("Shakesphere")),
-                    DataCell(Text("Null")),
 
-                  ]
-                ),
+              rows:  <DataRow>
+                  [
+                   dataRowObj,
+                   dataRowObj,
+                   dataRowObj,
+                   dataRowObj,
+                   dataRowObj,
+                  ],
 
-
-
-              ],
             ),
 
             ]
