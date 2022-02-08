@@ -71,7 +71,7 @@ class Archive:
 
 		return None
 
-	# update frequency of automated serach under user profile
+	# update frequency of automated search under user profile
 	def update_frequency(archive_id, new_frequency):
 
 		# finds archive id

@@ -35,6 +35,8 @@ class Entry:
 
 		return None
 
+	# also include author name for search engine
+
 	# searches map area filter, returns all entry ids with filter
 	def search_map_area(map_area):
 		# checks through all entries

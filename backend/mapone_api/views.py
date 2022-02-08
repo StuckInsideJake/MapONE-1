@@ -13,6 +13,7 @@ from mapone_api.archive import Archive
 
 
 # may need main page view?
+# maybe use action as a param
 
 class UserView(APIView):
 
