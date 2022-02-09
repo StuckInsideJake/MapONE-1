@@ -1,49 +1,55 @@
+from django.db.models import Max, F
 from mapone_api.models import User, Entry, Archive
 from django.core.mail import send_mail
 import requests
 
 # user class
-class User:
-
-	# constructor
-	def __init__(self, email_address, password):
-		self.user_id = generate_user_id()
-		self.email_address = email_address
-		self.password = password
-		self.archive_id_array = ''
+class UserClass:
 
 	# change password
-	def change_password(user_id, new_password):
+	def change_password(self, user_id, new_password):
 		# verify password
-		verified = verify_password(new_password)
+		verified = self.verify_password(new_password)
 
 		# if verified
 		if verified:
 			# look up user, change password
-			User.objects.get(user_id=user_id).update(
+			User.objects.filter(user_id=user_id).update(
 				password=new_password)
 
 		# return operation success
 		return verified
 
+	# check if email address
+	def check_existing_user(self, email_address):
+		# look up email address
+		user_exists = User.objects.filter(email_address=email_address)
+
+		# return if user exists
+		return len(list(user_exists)) != 0
+
 	# creates new user, returns user id
-	def create_new_user(email_address, password):
+	def create_new_user(self, email_address, password):
+		# check if email address is already used
+		email_in_use = self.check_existing_user(email_address)
+
 		# verify email address
-		valid_email = verify_email_address(email_address)
+		valid_email = self.verify_email_address(email_address)
 
 		# verify password
-		valid_password = verify_password(password)
+		valid_password = self.verify_password(password)
 
 		# if both verified
-		if valid_email and valid_password:
+		if not email_in_use and valid_email and valid_password:
 			# generate user id
-			user_id = generate_user_id()
+			user_id = self.generate_user_id()
 
 			# add to database
 			User.objects.create(
 				user_id=user_id,
 				email_address=email_address,
-				password=password
+				password=password,
+				archive_id_array=''
 			)
 
 			# return user_id
@@ -53,7 +59,7 @@ class User:
 		return False
 
 	# remove user account
-	def delete_user(user_id):
+	def delete_user(self, user_id):
 		# look up user, remove user
 		User.objects.get(user_id=user_id).delete()
 
@@ -65,19 +71,19 @@ class User:
 		return None
 
 	# creates new user id, returns user id
-	def generate_user_id():
+	def generate_user_id(self):
 		# get largest user id in database
 		user_id = User.objects.all().aggregate(Max('user_id'))
 
 		# return last user id + 1
-		return user_id['user_id'] + 1
+		return user_id['user_id__max'] + 1
 
 	# sends email to inform user on automated search updates
 	# django can do send_mass_mail()
 	# need to figure out default from email address --> see settings.py
-	def send_notification(user_id, subject, message):
+	def send_notification(self, user_id, subject, message):
 		# gets user's email address
-		email_address = User.objects.get(
+		email_address = User.objects.filter(
 			user_id=user_id).values('email_address')
 		
 		# sends email to message
@@ -92,30 +98,30 @@ class User:
 
 	# verifies new email address
 	# uses external API
-	def verify_email_address(email_address):
-		# set flag
-		valid_email = False
-
+	def verify_email_address(self, email_address):
 		# check if email address is under another user
-		email_in_use = User.objects.filter(email_address=email_address)
+		email_in_use = User.objects.filter(email_address=email_address).values('email_address')
+		email_in_use = len(list(email_in_use)) > 0
 
 		# if not found in database
 		if not email_in_use:
 			# send email API request
-			# uses https://www.abstractapi.com/ --> sign up and get own API key
+			# uses https://www.abstractapi.com/
 			# need to change, plan only allows 100 API calls
 			# TODO - Ricardo find something different, research best option
-			# The following is the format
+			# get own API key
+			api_key = ''
 			response = requests.get(
-				"https://emailvalidation.abstractapi.com/v1/?api_key=&email="
+				f"https://emailvalidation.abstractapi.com/v1/?api_key={api_key}&email={email_address}"
 			)
+			response = response.json()['is_smtp_valid']['value']
 			
-			valid_email = response.content['is_smtp_valid']['value']
+			return response
 
-		return valid_email
+		return False
 
 	# verifies new password
-	def verify_password(password):
+	def verify_password(self, password):
 		# get length
 		length_requirment = 8
 		length = len(password)
@@ -144,10 +150,18 @@ class User:
 		return length >= length_requirment and letter and digit and special
 
 	# checks if user is valid
-	def verify_user(email_address, password):
-		# checks database for email address
-		password_found = User.objects.get(email_address=email_address).values(
-			'password')
+	def verify_user(self, email_address, password):
+		# check existing user
+		user_exists = self.check_existing_user(email_address)
 
-		# return if password found
-		return password_found
+		# if user exists
+		if user_exists:
+			# checks database for mtaching password
+			password_found = User.objects.filter(email_address=email_address).values(
+				'password')
+			password_found = list(password_found)[0]['password'] == password
+
+			# return if password found
+			return password_found
+
+		return False
