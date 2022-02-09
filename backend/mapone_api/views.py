@@ -7,13 +7,13 @@ from django.http import HttpResponse
 from mapone_api.models import User, Entry, Archive
 
 # may not be able to be same name
-from mapone_api.user import User
-from mapone_api.entry import Entry
-from mapone_api.archive import Archive
+from mapone_api.user import UserClass
+from mapone_api.entry import EntryClass
+from mapone_api.archive import ArchiveClass
 
 
 # may need main page view?
-# maybe use action as a param
+# maybe use action as a param --> other big functions? separate files
 
 class UserView(APIView):
 

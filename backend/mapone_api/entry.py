@@ -1,7 +1,7 @@
 
 
 # entry class
-class Entry:
+class EntryClass:
 
 	# constructor
 	def __init__(self, source_name, source_link, map_area,

@@ -1,7 +1,7 @@
 
 
 # archive class
-class Archive:
+class ArchiveClass:
 
 	# constructor
 	def __init__(self, archive_url, frequency, entry_number):
