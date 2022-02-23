@@ -27,6 +27,19 @@ class UserClass:
 
 		# return if user exists
 		return len(list(user_exists)) != 0
+	
+	# change email address
+	def change_email(self, user_id,old_email, new_email):
+		# checks if in system with the old email 
+		check_existing_user(self,old_email)
+		#changes email to new email
+		# sets the new email to a var 
+		user_email = new_email
+		#converts old email to new email
+		email_address = user_email
+		#returns the new email address
+		return(self.user_id.email_address)
+
 
 	# creates new user, returns user id
 	def create_new_user(self, email_address, password):

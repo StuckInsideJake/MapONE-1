@@ -64,6 +64,15 @@ class UserTestCase(TestCase):
 
 		self.assertEqual(result, test_email)
 
+	# test  update user email
+	def test_update_user_email(self):
+		new_email = 'email@email.com'
+		self.user_class.change_email(self.user_id, self.email_address,new_email)
+		result = User.objects.filter(user_id=self.user_id).values('email_address')
+		result = list(result)[0]['email_address']
+
+		self.assertEqual(new_email, result)
+
 	# test delete user function
 	def test_delete_user(self):
 		self.user_class.delete_user(self.user_id)
@@ -124,6 +133,7 @@ class UserTestCase(TestCase):
 		test_password = 'abc'
 		result = self.user_class.verify_user(self.email_address, test_password)
 		self.assertEqual(result, False)
+
 
 
 # TODO - API tests too
