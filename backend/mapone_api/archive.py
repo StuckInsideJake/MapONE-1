@@ -1,83 +1,166 @@
+from datetime import date
+import calendar
+import schedule
+
+from mapone_api.models import Archive, User
+
+from mapone_api.user import UserClass
+from mapone_api.entry import EntryClass
+
+from django.db.models import Max
 
 
 # archive class
 class ArchiveClass:
 
-	# constructor
-	def __init__(self, archive_url, frequency, entry_number):
-		self.archive_id = generate_archive_id()
-		self.archive_url = archive_url
-		self.frequency = frequency
-		self.entry_number = get_entry_number(archive_url)
-
 	# creates new archive in database
-	def create_new_archive(archive_url, frequency, entry_number):
+	def create_new_archive(self, user_id, keyword, frequency):
+		# get user object
+		user_class = UserClass()
+		user_object = User.objects.get(user_id=user_id)
 
 		# generate archive id
+		archive_id = self.generate_archive_id()
 
-		# save new archive to user id
-	
+		# get entry number
+		entry_number = self.get_entry_number(keyword)
+
+		# add to database
+		Archive.objects.create(
+			user_id=user_object,
+			archive_id=archive_id,
+			keyword=keyword,
+			frequency=frequency,
+			entry_number=entry_number
+		)
+
 		# return archive id
+		return archive_id
 
-		return None
-
-	# checks number of entries pulled from current url, 
+	# checks number of entries pulled from current keyword search 
 	# updates entry number if greater than saved number
-	# TODO - needs internal timer to check automated searches monthly, weekly, etc.
-	def check_entry_number(archive_url, entry_number, frequency):
-
-		# check entry number pulled from current url
+	def check_entry_number(self, archive_id, keyword, past_entry_number):
+		# check current entry number from keyword search
+		current_entry_number = self.get_entry_number(keyword)
 
 		# if new number > old number
+		if current_entry_number > past_entry_number:
 			# get archive id
+			saved_archive = Archive.objects.filter(archive_id=archive_id).values()
+
 			# update entry number
+			saved_archive.update(entry_number=current_entry_number)
+
 			# get user id attached
-			# send notification to user id - user class
+			user_id = saved_archive['user_id']
 
-		# returns nothing?
+			# send notification to user id
+			# call user class
+			user_class = UserClass()
+			subject = 'MapONE: Automated Search Update'
+			message = f'There are new map additions to your {keyword} automated search.'
+			message += 'Visit USGS.gov/MapONE to view your results.'
+			user_class.send_notification(user_id, subject, message)
 
-		return None
+	# remove automated search
+	def delete_archive(self, archive_id):
+		# look up and delete automated search
+		Archive.objects.get(archive_id=archive_id).delete()
+
+		# update archive ids in database
+		Archive.objects.filter(archive_id__gt=archive_id).update(
+			archive_id=F('archive_id') - 1)
 
 	# generates new archive id from database
 	# should this be numbered based on user id or archive database?
-	def generate_archive_id():
+	def generate_archive_id(self):
+		# get largest archive id in database
+		archive_id = Archive.objects.all().aggregate(Max('archive_id'))
+		archive_id = archive_id['archive_id__max']
 
-		# check archive ids in database
+		# if no archive ids
+		if(not archive_id):
+			# return first entry value
+			first_entry = 1
+			return first_entry
 
-		# return last archive id + 1
+		# return last entry id + 1
+		return entry_id + 1
 
-		return None
+	# gets entry number from results pulled from search keyword
+	def get_entry_number(self, keyword):
+		# get results from keyword search
+		# call the entry class
+		entry_class = EntryClass()
+		results = entry_class.search_keyword(keyword)
 
-	# saves new archive id under user's profile
-	def save_new_archive(user_id, archive_id):
-		# find user id
+		# if not null
+		if results:
+			# return number of entries
+			return len(results)
 
-		# get archive array
+		# else, return 0 results
+		return 0
 
-		# append archive id to array
+	# pulls all archive ids with a given frequency
+	def get_searches_by_frequency(self, frequency):
+		archive_ids = Archive.objects.filter(frequency=frequency).value('archive_id')
+		return list(archive_id)
 
-		# returns nothing or success?
+	# get all archive data under a user id
+	def get_user_saved_searches(self, user_id):
+		# get all saved searches under a user id
+		saved_searches = Archive.objects.filter(user_id=user_id).values()
 
-		return None
+		# return list of search info
+		return list(saved_searches)
 
-	# updates entry number
-	def update_entry_number(archive_id, new_entry_number):
-		
-		# finds archive id
+	# checks automated searches by frequency
+	def run_frequency(self, frequency):
+		# get search results
+		results = self.get_searches_by_frequency(frequency)
 
-		# sets entry number top new number
+		# if not null
+		if results:
+			for archive_id in results:
+				# look up archive object
+				archive = Archive.objects.filter(archive_id=archive_id).values()
+				
+				# check entry number
+				self.check_entry_number(
+					archive_id,
+					archive['keyword'],
+					archive['entry_number']
+				)
 
-		# returns nothing or success?
+	# sets internal timer to run automated searches
+	# RUN THIS FUNCTION EVERY DAY --> TODO: where to call?
+	def run_schedule():
+		# get daily data
+		day = current_date.day
+		day_of_week = calendar.day_name[current_date.weekday()]
+		first_of_week = 'Monday'
+		first_of_month = 1
+		halfway_month = 15
 
-		return None
+		# run daily searches
+		self.run_frequency('daily')
 
-	# update frequency of automated search under user profile
-	def update_frequency(archive_id, new_frequency):
+		if day == first_of_month:
+			# run monthly & biweekly searches
+			self.run_frequency('month')
+			self.run_frequency('biweek')
 
-		# finds archive id
+		if day == halfway_month:
+			# run biweekly searches
+			self.run_frequency('biweek')
 
-		# sets frequency to new frequency
+		if day == first_of_week:
+			# run weekly searches
+			self.run_frequency('week')		
 
-		# returns nothing or success?
-
-		return None
+	# update frequency of automated search
+	def update_frequency(self, archive_id, new_frequency):
+		# find archive id, update frequency
+		Archive.objects.filter(archive_id=archive_id).update(
+			frequency=new_frequency)

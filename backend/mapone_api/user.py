@@ -1,5 +1,5 @@
 from django.db.models import Max, F
-from mapone_api.models import User, Entry, Archive
+from mapone_api.models import User
 from django.core.mail import send_mail
 import requests
 
@@ -20,7 +20,7 @@ class UserClass:
 		# return operation success
 		return verified
 
-	# check if email address
+	# check if email address already exists
 	def check_existing_user(self, email_address):
 		# look up email address
 		user_exists = User.objects.filter(email_address=email_address)
@@ -48,15 +48,13 @@ class UserClass:
 			User.objects.create(
 				user_id=user_id,
 				email_address=email_address,
-				password=password,
-				archive_id_array=''
+				password=password
 			)
 
 			# return user_id
 			return user_id
 
-		# different type - issue?
-		return False
+		return None
 
 	# remove user account
 	def delete_user(self, user_id):
@@ -67,20 +65,24 @@ class UserClass:
 		User.objects.filter(user_id__gt=user_id).update(
 			user_id=F('user_id') - 1)
 
-		# return none
-		return None
-
 	# creates new user id, returns user id
 	def generate_user_id(self):
 		# get largest user id in database
 		user_id = User.objects.all().aggregate(Max('user_id'))
+		user_id = user_id['user_id__max']
+
+		# if no user ids
+		if(not user_id):
+			# return first user value
+			first_user = 1
+			return first_user
 
 		# return last user id + 1
-		return user_id['user_id__max'] + 1
+		return user_id + 1
 
 	# sends email to inform user on automated search updates
 	# django can do send_mass_mail()
-	# need to figure out default from email address --> see settings.py
+	# TODO - need to figure out default from email address --> see settings.py
 	def send_notification(self, user_id, subject, message):
 		# gets user's email address
 		email_address = User.objects.filter(
@@ -93,8 +95,6 @@ class UserClass:
 			from_email=DEFAULT_FROM_EMAIL,
 			recipient_list=[email_address]
 		)
-
-		return None
 
 	# verifies new email address
 	# uses external API
@@ -109,11 +109,12 @@ class UserClass:
 			# uses https://www.abstractapi.com/
 			# need to change, plan only allows 100 API calls
 			# TODO - Ricardo find something different, research best option
-			# get own API key
+			# use own api key
 			api_key = ''
 			response = requests.get(
 				f"https://emailvalidation.abstractapi.com/v1/?api_key={api_key}&email={email_address}"
 			)
+	
 			response = response.json()['is_smtp_valid']['value']
 			
 			return response
