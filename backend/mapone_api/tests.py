@@ -20,7 +20,7 @@ class UserTestCase(TestCase):
 
 		# class variables
 		self.user_id = '1'
-		# use own email address
+		# use own test email
 		self.email_address = ''
 		self.password = 'password1!'
 
@@ -64,15 +64,6 @@ class UserTestCase(TestCase):
 
 		self.assertEqual(result, test_email)
 
-	# test  update user email
-	def test_update_user_email(self):
-		new_email = 'email@email.com'
-		self.user_class.change_email(self.user_id, self.email_address,new_email)
-		result = User.objects.filter(user_id=self.user_id).values('email_address')
-		result = list(result)[0]['email_address']
-
-		self.assertEqual(new_email, result)
-
 	# test delete user function
 	def test_delete_user(self):
 		self.user_class.delete_user(self.user_id)
@@ -105,11 +96,11 @@ class UserTestCase(TestCase):
 	# 	result = self.user_class.verify_email_address(test_email)
 	# 	self.assertEqual(result, False)
 
-	# 	API doesn't allow multiple tests @ a time but test works
-	#	# use own test email
-	# 	test_email = ''
-	# 	result = self.user_class.verify_email_address(test_email)
-	# 	self.assertEqual(result, True)
+		# API doesn't allow multiple tests @ a time but test works
+		# use own test email
+		#test_email = ''
+		#result = self.user_class.verify_email_address(test_email)
+		#self.assertEqual(result, True)
 
 	# test verify password function
 	def test_verify_password(self):
@@ -134,9 +125,6 @@ class UserTestCase(TestCase):
 		result = self.user_class.verify_user(self.email_address, test_password)
 		self.assertEqual(result, False)
 
-
-
-# TODO - API tests too
 # tests entry class functions
 class EntryTestCase(TestCase):
 
@@ -150,10 +138,9 @@ class EntryTestCase(TestCase):
 		self.source_name = 'test'
 		self.source_link = 'test'
 		self.article_title = 'test'
-		self.author_list = 'abc,def,ghi jk'
-		self.planet_flag = True
-		self.planet_name = 'test'
-		self.region_name = 'test'
+		self.publication_date = 'test'
+		self.author_list = 'test'
+		self.map_body = 'test'
 		self.map_scale = None
 
 		# create database object
@@ -162,10 +149,9 @@ class EntryTestCase(TestCase):
 			source_name=self.source_name,
 			source_link=self.source_link,
 			article_title=self.article_title,
+			publication_date=self.publication_date,
 			author_list=self.author_list,
-			planet_flag=self.planet_flag,
-			planet_name=self.planet_name,
-			region_name=self.region_name,
+			map_body=self.map_body,
 			map_scale=self.map_scale
 		)
 
@@ -194,10 +180,9 @@ class EntryTestCase(TestCase):
 			self.source_name,
 			self.source_link,
 			self.article_title,
+			self.publication_date,
 			self.author_list,
-			self.planet_flag,
-			self.planet_name,
-			self.region_name,
+			self.map_body,
 			self.map_scale
 		)
 
@@ -239,9 +224,8 @@ class EntryTestCase(TestCase):
 			self.source_link,
 			self.article_title,
 			self.author_list,
-			self.planet_flag,
-			self.planet_name,
-			self.region_name,
+			self.publication_date,
+			self.map_body,
 			self.map_scale
 		)
 
@@ -251,9 +235,8 @@ class EntryTestCase(TestCase):
 			'source_link':self.source_link,
 			'article_title':self.article_title,
 			'author_list':self.author_list,
-			'planet_flag':self.planet_flag,
-			'planet_name':self.planet_name,
-			'region_name':self.region_name,
+			'publication_date':self.publication_date,
+			'map_body':self.map_body,
 			'map_scale':self.map_scale
 		}
 
@@ -264,9 +247,8 @@ class EntryTestCase(TestCase):
 			'source_link':self.source_link,
 			'article_title':self.article_title,
 			'author_list':self.author_list,
-			'planet_flag':self.planet_flag,
-			'planet_name':self.planet_name,
-			'region_name':self.region_name,
+			'publication_date':self.publication_date,
+			'map_body':self.map_body,
 			'map_scale':self.map_scale
 		}
 
@@ -287,15 +269,14 @@ class EntryTestCase(TestCase):
 			'source_link':self.source_link,
 			'article_title':self.article_title,
 			'author_list':self.author_list,
-			'planet_flag':self.planet_flag,
-			'planet_name':self.planet_name,
-			'region_name':self.region_name,
+			'publication_date':self.publication_date,
+			'map_body':self.map_body,
 			'map_scale':self.map_scale
 		}
 
 		self.assertEqual([first_entry], result)
 
-		keyword = 'test keyword'
+		keyword = 'keyword'
 		result = self.entry_class.search_keyword(keyword)
 		self.assertEqual(None, result)		
 
@@ -306,29 +287,13 @@ class EntryTestCase(TestCase):
 			self.source_name,
 			self.source_link,
 			self.article_title,
+			self.publication_date,
 			self.author_list,
-			self.planet_flag,
-			self.planet_name,
-			self.region_name,
+			self.map_body,
 			self.map_scale
 		)
 
 		self.assertEqual(result, False)
-
-		# need to wait on client response --> see entry class
-		# # entry does not have minimum requirements
-		# result = self.entry_class.verify_entry(
-		# 	None,
-		# 	None,
-		# 	None,
-		# 	None,
-		# 	None,
-		# 	None,
-		# 	None,
-		# 	None
-		# )
-
-		# self.assertEqual(result, False)
 
 		# good entry
 		test_value = 'test2'
@@ -336,17 +301,14 @@ class EntryTestCase(TestCase):
 			test_value,
 			self.source_link,
 			self.article_title,
+			self.publication_date,
 			test_value,
-			self.planet_flag,
-			self.planet_name,
-			self.region_name,
+			self.map_body,
 			self.map_scale
 		)
 
 		self.assertEqual(result, True)
 
-
-# TODO - API tests too
 # tests archive class functions
 class ArchiveTestCase(TestCase):
 
@@ -355,6 +317,28 @@ class ArchiveTestCase(TestCase):
 		# delete all objects for testing purposes
 		Archive.objects.all().delete()
 		User.objects.all().delete()
+		Entry.objects.all().delete()
+
+		# create entry object
+		self.entry_id = 1
+		self.source_name = 'test'
+		self.source_link = 'test'
+		self.article_title = 'test'
+		self.publication_date = 'test'
+		self.author_list = 'test'
+		self.map_body = 'test'
+		self.map_scale = None
+
+		Entry.objects.create(
+			entry_id=self.entry_id,
+			source_name=self.source_name,
+			source_link=self.source_link,
+			article_title=self.article_title,
+			publication_date=self.publication_date,
+			author_list=self.author_list,
+			map_body=self.map_body,
+			map_scale=self.map_scale
+		)
 
 		# create user object
 		self.user_id = 1
@@ -372,7 +356,7 @@ class ArchiveTestCase(TestCase):
 		self.archive_id = 1
 		self.keyword = 'test'
 		self.frequency = 'month'
-		self.entry_number = 10
+		self.entry_number = 1
 
 		# create archive object
 		Archive.objects.create(
@@ -400,3 +384,95 @@ class ArchiveTestCase(TestCase):
 		archive_id = list(archive_id)[0]['archive_id']
 
 		self.assertEqual(result, archive_id)
+
+	# test check entry number function
+	def test_check_entry_number(self):
+		past_entry_number = 0
+		self.archive_class.check_entry_number(
+			self.archive_id,
+			self.keyword,
+			past_entry_number
+		)
+		result = Archive.objects.filter(archive_id=self.archive_id).values('entry_number')
+		result = list(result)[0]['entry_number']
+
+		self.assertEqual(self.entry_number, result)
+
+	# test delete archive function
+	def test_delete_archive(self):
+		self.archive_class.delete_archive(self.archive_id)
+		result = Archive.objects.filter(archive_id=self.archive_id)
+		is_empty = []
+
+		self.assertEqual(list(result), is_empty)
+
+	# test generate archive id function
+	def test_generate_archive_id(self):
+		test_id = self.archive_class.generate_archive_id() - 1
+		result = Archive.objects.all().aggregate(Max('archive_id'))
+		result = result['archive_id__max']
+
+		self.assertEqual(test_id, result)
+
+		Archive.objects.all().delete()
+		test_id = self.archive_class.generate_archive_id()
+		result = 1
+
+		self.assertEqual(test_id, result)
+
+	# test get entry number from keyword search
+	def test_get_entry_number(self):
+		result = self.archive_class.get_entry_number(self.keyword)
+		self.assertEqual(result, 1)
+
+		test_keyword = 'abc'
+		result = self.archive_class.get_entry_number(test_keyword)
+		self.assertEqual(result, 0)
+
+	# test get searches by frequency
+	def test_get_searches_by_frequency(self):
+		result = self.archive_class.get_searches_by_frequency(self.frequency)
+		self.assertEqual(result, [self.archive_id])
+
+		test_frequency = 'week'
+		result = self.archive_class.get_searches_by_frequency(test_frequency)
+		is_empty = []
+		self.assertEqual(result, is_empty)
+
+	# test get all user saved searches
+	def test_get_user_saved_searches(self):
+		result = self.archive_class.get_user_saved_searches(self.user_id)
+		correct_output = [
+			{	'user_id_id': self.user_id,
+				'archive_id': self.archive_id,
+				'keyword': self.keyword,
+				'frequency': self.frequency,
+				'entry_number': self.entry_number
+			}
+		]
+		self.assertEqual(result, correct_output)
+
+		test_user_id = 2
+		result = self.archive_class.get_user_saved_searches(test_user_id)
+		is_empty = []
+		self.assertEqual(result, is_empty)
+
+	# test run frequency
+	def test_run_frequency(self):
+		# dummy test
+		self.archive_class.run_frequency(self.frequency)
+
+	# test run schedule
+	def test_run_schedule(self):
+		# dummy test
+		self.archive_class.run_schedule()
+
+	# test update frequency
+	def test_update_frequency(self):
+		new_frequency = 'week'
+		self.archive_class.update_frequency(self.archive_id, new_frequency)
+
+		frequency = Archive.objects.filter(archive_id=self.archive_id).values('frequency')
+		current_frequency = list(frequency)[0]['frequency']
+
+		self.assertEqual(new_frequency, current_frequency)

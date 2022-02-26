@@ -7,21 +7,20 @@ class User(models.Model):
 	password = models.CharField(max_length=100)
 
 	def __str__(self):
-		return self.user_id
+		return str(self.user_id)
 
 class Entry(models.Model):
 	entry_id = models.IntegerField(primary_key=True)
 	source_name = models.CharField(max_length=100)
 	source_link = models.CharField(max_length=300)
 	article_title = models.CharField(max_length=100)
+	publication_date = models.CharField(max_length=10)
 	author_list = models.CharField(max_length=100)
-	planet_flag = models.BooleanField()
-	planet_name = models.CharField(max_length=100, default=None)
-	region_name = models.CharField(max_length=100)
+	map_body = models.CharField(max_length=100)
 	map_scale = models.CharField(max_length=100, null=True)
 
 	def __str__(self):
-		return self.entry_id
+		return str(self.entry_id)
 
 class Archive(models.Model):
 	user_id = models.ForeignKey(
@@ -31,10 +30,8 @@ class Archive(models.Model):
 	)
 	archive_id = models.IntegerField(primary_key=True)
 	keyword = models.CharField(max_length=100)
-
-	# maybe add filter?
 	frequency = models.CharField(max_length=100)
 	entry_number = models.IntegerField()
 
 	def __str__(self):
-		return self.archive_id
+		return str(self.archive_id)
