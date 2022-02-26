@@ -17,7 +17,7 @@ class EntryClass:
 
 	# creates new entry
 	def create_new_entry(self, source_name, source_link, article_title,
-		author_list, planet_flag, planet_name, region_name, map_scale):
+		publication_date, author_list, map_body, map_scale):
 		# generate entry id
 		entry_id = self.generate_entry_id()
 
@@ -27,10 +27,9 @@ class EntryClass:
 			source_name=source_name,
 			source_link=source_link,
 			article_title=article_title,
+			publication_date=publication_date,
 			author_list=author_list,
-			planet_flag=planet_flag,
-			planet_name=planet_name,
-			region_name=region_name,
+			map_body=map_body,
 			map_scale=map_scale
 		)
 
@@ -67,8 +66,6 @@ class EntryClass:
 		all_entries = Entry.objects.all().order_by('article_title').values()
 		return list(all_entries)
 
-	# TODO - filter functions, return list of entry ids
-
 	# return data array for each entry id pulled, append to a list
 	# searches all text fields for keyword
 	def search_keyword(self, keyword):
@@ -94,18 +91,10 @@ class EntryClass:
 		return None
 
 	# verifies new entry collected by web scraper
-	def verify_entry(self, source_name, source_link, article_title, author_list,
-		planet_flag, planet_name, region_name, map_scale):
-
-		# check minimum requirements
-		# only map scale can be None, unless non-planet? --> ask client
-
-		# check planet flag? --> ask client
-		
+	def verify_entry(self, source_name, source_link, article_title,
+		publication_date, author_list, map_body, map_scale):
 		# check existing
 		entry_exists = self.check_existing_entry(article_title, author_list)
-
-		# USGS database API check
 
 		# if verified
 		if(not entry_exists):
@@ -114,21 +103,11 @@ class EntryClass:
 				source_name,
 				source_link,
 				article_title,
+				publication_date,
 				author_list,
-				planet_flag,
-				planet_name,
-				region_name,
+				map_body,
 				map_scale
 			)
 
 		# return success or fail
 		return not entry_exists
-
-	# stretch goal: clears database of invalid entries
-	def clean_entries(self):
-		# some criteria
-
-		# get entry id
-
-		# delete entry
-		return None

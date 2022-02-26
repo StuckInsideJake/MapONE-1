@@ -7,7 +7,7 @@ from mapone_api.models import Archive, User
 from mapone_api.user import UserClass
 from mapone_api.entry import EntryClass
 
-from django.db.models import Max
+from django.db.models import Max, F
 
 
 # archive class
@@ -52,7 +52,7 @@ class ArchiveClass:
 			saved_archive.update(entry_number=current_entry_number)
 
 			# get user id attached
-			user_id = saved_archive['user_id']
+			user_id = list(saved_archive)[0]['user_id_id']
 
 			# send notification to user id
 			# call user class
@@ -72,7 +72,6 @@ class ArchiveClass:
 			archive_id=F('archive_id') - 1)
 
 	# generates new archive id from database
-	# should this be numbered based on user id or archive database?
 	def generate_archive_id(self):
 		# get largest archive id in database
 		archive_id = Archive.objects.all().aggregate(Max('archive_id'))
@@ -84,8 +83,8 @@ class ArchiveClass:
 			first_entry = 1
 			return first_entry
 
-		# return last entry id + 1
-		return entry_id + 1
+		# return last archive id + 1
+		return archive_id + 1
 
 	# gets entry number from results pulled from search keyword
 	def get_entry_number(self, keyword):
@@ -104,8 +103,18 @@ class ArchiveClass:
 
 	# pulls all archive ids with a given frequency
 	def get_searches_by_frequency(self, frequency):
-		archive_ids = Archive.objects.filter(frequency=frequency).value('archive_id')
-		return list(archive_id)
+		# set id list
+		id_list = []
+
+		# get all searches with given frequency
+		archive_ids = Archive.objects.filter(frequency=frequency).values('archive_id')
+
+		# loop across archive ids
+		for archive_id in archive_ids:
+			id_list.append(archive_id['archive_id'])
+		
+		# return list
+		return id_list
 
 	# get all archive data under a user id
 	def get_user_saved_searches(self, user_id):
@@ -125,6 +134,7 @@ class ArchiveClass:
 			for archive_id in results:
 				# look up archive object
 				archive = Archive.objects.filter(archive_id=archive_id).values()
+				archive = list(archive)[0]
 				
 				# check entry number
 				self.check_entry_number(
@@ -135,10 +145,11 @@ class ArchiveClass:
 
 	# sets internal timer to run automated searches
 	# RUN THIS FUNCTION EVERY DAY --> TODO: where to call?
-	def run_schedule():
+	def run_schedule(self):
 		# get daily data
-		day = current_date.day
-		day_of_week = calendar.day_name[current_date.weekday()]
+		today = date.today()
+		day = today.day
+		day_of_week = calendar.day_name[today.weekday()]
 		first_of_week = 'Monday'
 		first_of_month = 1
 		halfway_month = 15
