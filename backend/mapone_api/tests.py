@@ -5,11 +5,295 @@ from mapone_api.entry import EntryClass
 from mapone_api.archive import ArchiveClass
 
 from mapone_api.models import User, Entry, Archive
+from mapone_api.constants import *
 
 from django.db.models import Max
 
+from rest_framework import status
+from rest_framework.test import APIClient
 
-# TODO - API tests too
+
+# tests user, entry, and archive APIs
+class APITestCase(TestCase):
+
+	# test constructor
+	def setUp(self):
+		# delete all objects for testing purposes
+		User.objects.all().delete()
+		Entry.objects.all().delete()
+		Archive.objects.all().delete()
+
+		# define variables
+		self.client = APIClient()
+		self.user_url = '/user/'
+		self.entry_url = '/entry/'
+		self.archive_url = '/archive/'
+		# use own test email
+		self.email_address = ''
+		self.password = 'password1?'
+
+	def test_no_params(self):
+		response = self.client.get(self.user_url)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+		response = self.client.get(self.entry_url)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+		response = self.client.get(self.archive_url)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+		params = {'action': CREATE_USER}
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_wrong_action(self):
+		params = {
+			'action': 100,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.data, None)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+		response = self.client.get(self.entry_url, params)
+		self.assertEqual(response.data, None)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+		response = self.client.get(self.archive_url, params)
+		self.assertEqual(response.data, INVALID_EMAIL)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+		User.objects.create(
+			user_id=1,
+			email_address=self.email_address,
+			password=self.password
+		)
+		response = self.client.get(self.archive_url, params)
+		self.assertEqual(response.data, None)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+	def test_create_user_action(self):
+		params = {
+			'action': CREATE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_login(self):
+		User.objects.all().delete()
+		params = {
+			'action': LOGIN,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.data, INVALID_EMAIL)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+		params = {
+			'action': CREATE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.data, SUCCESS)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+		params = {
+			'action': LOGIN,
+			'email_address': self.email_address,
+			'password': 'test_password'
+		}
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.data, INVALID_PASSWORD)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_change_password_action(self):
+		params = {
+			'action': CREATE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+
+		params = {
+			'action': CHANGE_PASSWORD,
+			'email_address': self.email_address,
+			'password': self.password,
+			'new_password': 'password2?'
+		}
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.data, SUCCESS)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_delete_user_action(self):
+		params = {
+			'action': CREATE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+
+		params = {
+			'action': DELETE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.data, SUCCESS)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+		response = self.client.get(self.user_url, params)
+		self.assertEqual(response.data, INVALID_EMAIL)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_main_page_action(self):
+		Entry.objects.create(
+			entry_id=1,
+			source_name='test',
+			source_link='test',
+			article_title='test',
+			publication_date='test',
+			author_list='test',
+			map_body='test',
+			map_scale='test'
+		)
+		params = {'action': MAIN_PAGE}
+		response = self.client.get(self.entry_url, params)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_search_keyword_action(self):
+		Entry.objects.create(
+			entry_id=1,
+			source_name='test',
+			source_link='test',
+			article_title='test',
+			publication_date='test',
+			author_list='test',
+			map_body='test',
+			map_scale='test'
+		)
+		params = {'action': SEARCH_KEYWORD, 'keyword': 'test'}
+		response = self.client.get(self.entry_url, params)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+		params = {'action': SEARCH_KEYWORD, 'keyword': 'abc'}
+		response = self.client.get(self.entry_url, params)
+		self.assertEqual(response.data, None)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_create_archive_action(self):
+		params = {
+			'action': CREATE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+
+		params = {
+			'action': CREATE_ARCHIVE,
+			'email_address': self.email_address,
+			'password': self.password,
+			'keyword': 'test',
+			'frequency': 'test'
+		}
+		response = self.client.get(self.archive_url, params)
+		self.assertEqual(response.data, SUCCESS)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_display_user_archives(self):
+		params = {
+			'action': CREATE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+
+		params = {
+			'action': CREATE_ARCHIVE,
+			'email_address': self.email_address,
+			'password': self.password,
+			'keyword': 'test',
+			'frequency': 'test'
+		}
+		response = self.client.get(self.archive_url, params)
+
+		params = {
+			'action': DISPLAY_USER_ARCHIVES,
+			'email_address': self.email_address,
+			'password': self.password,
+		}
+		response = self.client.get(self.archive_url, params)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_delete_archive_action(self):
+		params = {
+			'action': CREATE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+
+		params = {
+			'action': CREATE_ARCHIVE,
+			'email_address': self.email_address,
+			'password': self.password,
+			'keyword': 'test',
+			'frequency': 'test'
+		}
+		response = self.client.get(self.archive_url, params)
+
+		params = {
+			'action': DELETE_ARCHIVE,
+			'email_address': self.email_address,
+			'password': self.password,
+		}
+
+		response = self.client.get(self.archive_url, params)
+		self.assertEqual(response.data, None)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+		params = {
+			'action': DELETE_ARCHIVE,
+			'email_address': self.email_address,
+			'password': self.password,
+			'keyword': 'test'
+		}
+		response = self.client.get(self.archive_url, params)
+		self.assertEqual(response.data, SUCCESS)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_update_frequency_action(self):
+		params = {
+			'action': CREATE_USER,
+			'email_address': self.email_address,
+			'password': self.password
+		}
+		response = self.client.get(self.user_url, params)
+
+		params = {
+			'action': CREATE_ARCHIVE,
+			'email_address': self.email_address,
+			'password': self.password,
+			'keyword': 'test',
+			'frequency': 'week'
+		}
+		response = self.client.get(self.archive_url, params)
+
+		params = {
+			'action': UPDATE_FREQUENCY,
+			'email_address': self.email_address,
+			'password': self.password,
+			'keyword': 'test',
+			'new_frequency': 'month'
+		}
+		response = self.client.get(self.archive_url, params)
+		self.assertEqual(response.data, SUCCESS)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 # tests user class functions
 class UserTestCase(TestCase):
 
@@ -19,7 +303,7 @@ class UserTestCase(TestCase):
 		User.objects.all().delete()
 
 		# class variables
-		self.user_id = '1'
+		self.user_id = 1
 		# use own test email
 		self.email_address = ''
 		self.password = 'password1!'
@@ -46,12 +330,12 @@ class UserTestCase(TestCase):
 	# test existing user function
 	def test_check_existing_user(self):
 		result = self.user_class.check_existing_user(self.email_address)
-		self.assertEqual(result, True)
+		self.assertEqual(result, self.user_id)
 
 		# use own test email
 		test_email = ''
 		result = self.user_class.check_existing_user(test_email)
-		self.assertEqual(result, False)		
+		self.assertEqual(result, None)		
 
 	# test create new user function
 	def test_create_new_user(self):
@@ -115,15 +399,15 @@ class UserTestCase(TestCase):
 	# test verify user function
 	def test_verify_user(self):
 		result = self.user_class.verify_user(self.email_address, self.password)
-		self.assertEqual(result, True)
+		self.assertEqual(result, SUCCESS)
 
 		test_email = 'abc'
 		result = self.user_class.verify_user(test_email, self.password)
-		self.assertEqual(result, False)
+		self.assertEqual(result, INVALID_EMAIL)
 
 		test_password = 'abc'
 		result = self.user_class.verify_user(self.email_address, test_password)
-		self.assertEqual(result, False)
+		self.assertEqual(result, INVALID_PASSWORD)
 
 # tests entry class functions
 class EntryTestCase(TestCase):

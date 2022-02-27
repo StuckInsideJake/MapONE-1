@@ -1,12 +1,13 @@
 from django.db.models import Max, F
 from mapone_api.models import User
+from mapone_api.constants import *
 from django.core.mail import send_mail
 from mapone.settings import DEFAULT_FROM_EMAIL
 import requests
 
 # user class
 class UserClass:
-
+	# need function to reset password
 	# change password
 	def change_password(self, user_id, new_password):
 		# verify password
@@ -18,16 +19,22 @@ class UserClass:
 			User.objects.filter(user_id=user_id).update(
 				password=new_password)
 
+			return SUCCESS
+
 		# return operation success
-		return verified
+		return INVALID_PASSWORD
 
 	# check if email address already exists
 	def check_existing_user(self, email_address):
 		# look up email address
-		user_exists = User.objects.filter(email_address=email_address)
+		user_exists = User.objects.filter(email_address=email_address).values()
 
 		# return if user exists
-		return len(list(user_exists)) != 0
+		if user_exists:
+			return list(user_exists)[0]['user_id']
+
+		# no user
+		return None
 
 	# creates new user, returns user id
 	def create_new_user(self, email_address, password):
@@ -40,8 +47,14 @@ class UserClass:
 		# verify password
 		valid_password = self.verify_password(password)
 
-		# if both verified
-		if not email_in_use and valid_email and valid_password:
+		if not valid_email:
+			return INVALID_EMAIL
+
+		if not valid_password:
+			return INVALID_PASSWORD
+
+		# if verified
+		if not email_in_use:
 			# generate user id
 			user_id = self.generate_user_id()
 
@@ -52,10 +65,11 @@ class UserClass:
 				password=password
 			)
 
-			# return user_id
-			return user_id
+			# return operation success
+			return SUCCESS
 
-		return None
+		# user already exists
+		return EMAIL_IN_USE
 
 	# remove user account
 	def delete_user(self, user_id):
@@ -65,6 +79,8 @@ class UserClass:
 		# update user ids in database
 		User.objects.filter(user_id__gt=user_id).update(
 			user_id=F('user_id') - 1)
+
+		return SUCCESS
 
 	# creates new user id, returns user id
 	def generate_user_id(self):
@@ -110,9 +126,8 @@ class UserClass:
 	# 		# uses https://www.abstractapi.com/
 	# 		# need to change, plan only allows 100 API calls
 	# 		# TODO - Ricardo find something different, research best option
-	#		api_key = ''
 	# 		response = requests.get(
-	# 			f"https://emailvalidation.abstractapi.com/v1/?api_key={api_key}&email={email_address}"
+	# 			f"https://emailvalidation.abstractapi.com/v1/?api_key=99adf12647a5431db071315bf2d57b68&email={email_address}"
 	# 		)
 	#
 	# 		response = response.json()['is_smtp_valid']['value']
@@ -164,7 +179,13 @@ class UserClass:
 				'password')
 			password_found = list(password_found)[0]['password'] == password
 
-			# return if password found
-			return password_found
+			# if password verified
+			if password_found:
+				# return login success
+				return SUCCESS
 
-		return False
+			# else, incorrect password
+			return INVALID_PASSWORD
+
+		# user does not exist
+		return INVALID_EMAIL
