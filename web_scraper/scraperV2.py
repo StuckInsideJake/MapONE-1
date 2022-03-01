@@ -13,9 +13,9 @@ import numpy as np
 # This library is imported to check if we can feasibly introduce delays into the processor loop to reduce instances of the remote server, 
 # shutting the connection while scrapping extraordinarily large datasets
 import time
-# Fragmenting code into different scripts. Some functions are to be used across the different sub-parts as well. 
-# Hence, shifted some of the functions to the new script
-from common_functions import pre_processing, argument_formatter, keyword_url_generator, abstract_id_log_name_generator, status_logger
+# Functions are to be used across the different sub-parts in a separate script
+# Shifts some of the functions to the new script
+from util_functions import pre_processing, argument_formatter, keyword_url_generator, abstract_id_log_name_generator, status_logger
 
 def url_reader(url, status_logger_name):
 	# This keyword is supplied to the URL and is hence used for souping.
@@ -152,8 +152,7 @@ def abstract_page_scraper(abstract_url, abstract_input_tag_id, abstracts_log_nam
 	except AttributeError:
 		abstract = "Abstract not available"
 
-	abstract_database_writer(abstract_page_url, title, author, abstract, abstracts_log_name, abstract_date, status_logger_name)
-	analytical_abstract_database_writer(title, author, abstract, abstracts_log_name, status_logger_name)
+	abstract_database_writer(abstract_page_url, title, author, keywords_to_search, abstracts_log_name, abstract_date, status_logger_name)
 
 def abstract_scanner(abstract_url, abstract_id_log_name, abstracts_log_name, permanent_word_sorter_list, site_url_index, status_logger_name):
 	abstract_crawler_start_status_key = "Entered the Abstract Scanner"
@@ -182,39 +181,29 @@ def abstract_scanner(abstract_url, abstract_id_log_name, abstracts_log_name, per
 	abstract_crawler_end_status_key = "Exiting the Abstract Scanner"
 	status_logger(status_logger_name, abstract_crawler_end_status_key)
 
-def analytical_abstract_database_writer(title, author, abstract, abstracts_log_name, status_logger_name):
-	'''This function will generate a secondary abstract file that will contain only the abstract.
-	The abstract file generated will be passed onto the Visualizer and Analyzer function, as opposed to the complete 
-	abstract log file containing lot of garbage words in addition to the abstract text.'''
-	analytical_abstract_database_writer_start_status_key = "Writing"+" "+title+" "+"by"+" "+author+" "+"to analytical abstracts file"
-	status_logger(status_logger_name, analytical_abstract_database_writer_start_status_key)
-
-	analytical_abstracts_txt_log = open(abstracts_log_name+'_'+'ANALYTICAL'+'.txt', 'a')
-	analytical_abstracts_txt_log.write(abstract)
-	analytical_abstracts_txt_log.write('\n'+'\n')
-	analytical_abstracts_txt_log.close()
-
-	analytical_abstract_database_writer_stop_status_key = "Written"+" "+title+" "+"to disc"
-	status_logger(status_logger_name, analytical_abstract_database_writer_stop_status_key)
-
-def abstract_database_writer(abstract_page_url, title, author, abstract, abstracts_log_name, abstract_date, status_logger_name):
+def abstract_database_writer(abstract_page_url, title, author, body, abstracts_log_name, abstract_date, status_logger_name):
 	# Makes text/csv files to contain the abstracts for future reference
-	# It holds: 1) Title, 2) Author(s), 3) Abstract
+	# It holds: 1) Title, 2) Author(s), 3) Date(s), 4) Scale(s), 5) URL(s)
 	abstract_database_writer_start_status_key = "Writing " + title + " by " + author + " to disc"
 	status_logger(status_logger_name, abstract_database_writer_start_status_key)
+
+	body = keywords_to_search
 	
 	abstracts_csv_log = open(abstracts_log_name + '.csv', 'a')
 	abstracts_txt_log = open(abstracts_log_name + '.txt', 'a')
-	abstracts_txt_log.write("Title: " + title)
-	abstracts_txt_log.write('\n')
-	abstracts_txt_log.write("Author: " + author)
-	abstracts_txt_log.write('\n')
-	abstracts_txt_log.write("Date: " + abstract_date)
-	abstracts_txt_log.write('\n')
-	abstracts_txt_log.write("URL: " + abstract_page_url)
-	abstracts_txt_log.write('\n')
-	abstracts_txt_log.write("Scale: ")
-	abstracts_txt_log.write('\n'+'\n')
+	abstracts_csv_log.write("Title: " + title)
+	abstracts_csv_log.write('\n')
+	abstracts_csv_log.write("Author: " + author)
+	abstracts_csv_log.write('\n')
+	abstracts_csv_log.write("Date: " + abstract_date)
+	abstracts_csv_log.write('\n')
+	abstracts_csv_log.write("Scale: ")
+	abstracts_csv_log.write('\n')
+	abstracts_csv_log.write("Area/Body: " + body)
+	abstracts_csv_log.write('\n')
+	abstracts_csv_log.write("URL: " + abstract_page_url)
+	abstracts_csv_log.write('\n')
+	abstracts_csv_log.write('\n'+'\n')
 	abstracts_txt_log.close()
 	abstracts_csv_log.close()
 
@@ -238,7 +227,7 @@ def abstract_id_database_reader(abstract_id_log_name, site_url_index, status_log
 def abstract_id_database_writer(abstract_id_log_name, abstract_input_tag_id, site_url_index):
 	# Writes the abtract IDs to a .txt file for easy access and documentation
 	abstract_id_writer_temp_index  = site_url_index
-	abstract_id_log = open((abstract_id_log_name + str(abstract_id_writer_temp_index+1) + '.txt'), 'a')
+	abstract_id_log = open((abstract_id_log_name + str(abstract_id_writer_temp_index + 1) + '.txt'), 'a')
 	abstract_id_log.write(abstract_input_tag_id)
 	abstract_id_log.write('\n')
 	abstract_id_log.close()
@@ -268,14 +257,14 @@ def abstract_scraper(abstract_soup):
 
 def author_scraper(abstract_soup, status_logger_name):
 	# Scrapes the author of the text, for easy navigation and search
-	author_scraper_start_status_key = "Scraping the author name"
+	author_scraper_start_status_key = "Scraping the author(s) name"
 	status_logger(status_logger_name, author_scraper_start_status_key)
 
 	# Converts author names to a findAll() list and then concatinates into a string for storage
-	author = ''.join(str(author) for author in [authorElement.text 
-	for authorElement in abstract_soup.findAll('li', {'class':'c-article-author-list__item'})])
+	author = ', '.join(str(author) for author in [authorElement.text 
+	for authorElement in abstract_soup.findAll('a', {'data-test': 'author-name'})])
 
-	author_scraper_end_status_key = "Scraped the author's name: " + str(author)
+	author_scraper_end_status_key = "Scraped the author(s) name: " + str(author)
 	status_logger(status_logger_name, author_scraper_end_status_key)
 
 	return author
@@ -394,3 +383,15 @@ def scraper_main(keywords_to_search, abstracts_log_name, status_logger_name):
 	abstract_year_dictionary_dumper(abstract_year_dictionary, abstracts_log_name, status_logger_name)
 
 	return 0
+
+# Here, we call the main function that runs the scraper with specified keywords
+if __name__ == '__main__':
+	# Abstracts containing these keywords will be scraped from Springer
+	'''INSERT KEYWORDS HERE'''
+	keywords_to_search = "Saturn topography"
+
+    # References a separate LOG folder that holds abstract names and status of each one
+	abstracts_log_name, status_logger_name = pre_processing(keywords_to_search)
+	
+	# Calling the scraper_main() to start the scraping process
+	scraper_main(keywords_to_search, abstracts_log_name, status_logger_name)
