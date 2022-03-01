@@ -1,6 +1,5 @@
 from datetime import date
 import calendar
-import schedule
 
 from mapone_api.models import Archive, User
 

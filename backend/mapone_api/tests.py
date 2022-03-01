@@ -370,21 +370,21 @@ class UserTestCase(TestCase):
 
 		self.assertEqual(test_id, result)
 
-	# test verify email address
-	# RUN TEST BY ITSELF --> ISSUES W API
-	# def test_verify_email_address(self):
-	# 	result = self.user_class.verify_email_address(self.email_address)
-	# 	self.assertEqual(result, False)
-		
-	# 	test_email = 'abc'
-	# 	result = self.user_class.verify_email_address(test_email)
-	# 	self.assertEqual(result, False)
+	# test send notification
+	def test_send_notification(self):
+		# dummy test, check email
+		subject = 'test'
+		message = 'test'
+		self.user_class.send_notification(self.user_id, subject, message)
 
-		# API doesn't allow multiple tests @ a time but test works
-		# use own test email
-		#test_email = ''
-		#result = self.user_class.verify_email_address(test_email)
-		#self.assertEqual(result, True)
+	# test verify email address
+	def test_verify_email_address(self):
+		result = self.user_class.verify_email_address(self.email_address)
+		self.assertEqual(result, True)
+		
+		test_email = 'abc'
+		result = self.user_class.verify_email_address(test_email)
+		self.assertEqual(result, False)
 
 	# test verify password function
 	def test_verify_password(self):

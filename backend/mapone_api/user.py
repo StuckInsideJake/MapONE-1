@@ -4,6 +4,7 @@ from mapone_api.constants import *
 from django.core.mail import send_mail
 from mapone.settings import DEFAULT_FROM_EMAIL
 import requests
+from email_validator import validate_email, EmailNotValidError
 
 # user class
 class UserClass:
@@ -98,12 +99,11 @@ class UserClass:
 		return user_id + 1
 
 	# sends email to inform user on automated search updates
-	# django can do send_mass_mail()
-	# need to figure out default from email address --> see settings.py
 	def send_notification(self, user_id, subject, message):
 		# gets user's email address
 		email_address = User.objects.filter(
 			user_id=user_id).values('email_address')
+		email_address = list(email_address)[0]['email_address']
 		
 		# sends email to message
 		send_mail(
@@ -114,29 +114,15 @@ class UserClass:
 		)
 
 	# verifies new email address
-	# uses external API
 	def verify_email_address(self, email_address):
-	# 	# check if email address is under another user
-	# 	email_in_use = User.objects.filter(email_address=email_address).values('email_address')
-	# 	email_in_use = len(list(email_in_use)) > 0
+		# check if email address is valid
+		try:
+			validate_email(email_address)
+			return True
 
-	# 	# if not found in database
-	# 	if not email_in_use:
-	# 		# send email API request
-	# 		# uses https://www.abstractapi.com/
-	# 		# need to change, plan only allows 100 API calls
-	# 		# TODO - Ricardo find something different, research best option
-	# 		response = requests.get(
-	# 			f"https://emailvalidation.abstractapi.com/v1/?api_key=99adf12647a5431db071315bf2d57b68&email={email_address}"
-	# 		)
-	#
-	# 		response = response.json()['is_smtp_valid']['value']
-			
-	# 		return response
-
-	# 	return False
-		# temp return value
-		return True
+		# error
+		except EmailNotValidError:
+			return False
 
 	# verifies new password
 	def verify_password(self, password):

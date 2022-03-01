@@ -127,5 +127,5 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# need to set default email address for notifications
+# Email settings
 DEFAULT_FROM_EMAIL = ''
