@@ -12,6 +12,8 @@ from django.db.models import Max
 from rest_framework import status
 from rest_framework.test import APIClient
 
+import datetime
+
 
 # tests user, entry, and archive APIs
 class APITestCase(TestCase):
@@ -156,7 +158,7 @@ class APITestCase(TestCase):
 			source_name='test',
 			source_link='test',
 			article_title='test',
-			publication_date='test',
+			publication_date=datetime.date(2000, 1, 1),
 			author_list='test',
 			map_body='test',
 			map_scale='test'
@@ -171,7 +173,7 @@ class APITestCase(TestCase):
 			source_name='test',
 			source_link='test',
 			article_title='test',
-			publication_date='test',
+			publication_date=datetime.date(2000, 1, 1),
 			author_list='test',
 			map_body='test',
 			map_scale='test'
@@ -183,6 +185,21 @@ class APITestCase(TestCase):
 		params = {'action': SEARCH_KEYWORD, 'keyword': 'abc'}
 		response = self.client.get(self.entry_url, params)
 		self.assertEqual(response.data, None)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+	def test_filter_year_action(self):
+		Entry.objects.create(
+			entry_id=1,
+			source_name='test',
+			source_link='test',
+			article_title='test',
+			publication_date=datetime.date(2000, 1, 1),
+			author_list='test',
+			map_body='test',
+			map_scale='test'
+		)
+		params = {'action': FILTER_YEAR, 'first_year': '2000', 'second_year': '2002'}
+		response = self.client.get(self.entry_url, params)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_create_archive_action(self):
@@ -422,7 +439,7 @@ class EntryTestCase(TestCase):
 		self.source_name = 'test'
 		self.source_link = 'test'
 		self.article_title = 'test'
-		self.publication_date = 'test'
+		self.publication_date = datetime.date(2000, 1, 1)
 		self.author_list = 'test'
 		self.map_body = 'test'
 		self.map_scale = None
@@ -486,6 +503,11 @@ class EntryTestCase(TestCase):
 
 		self.assertEqual(list(result), is_empty)
 
+	# test filter year
+	def test_filter_year(self):
+		# dummy test
+		result = self.entry_class.filter_year('2000', '2002')
+
 	# test generate entry id function
 	def test_generate_entry_id(self):
 		test_id = self.entry_class.generate_entry_id() - 1
@@ -507,8 +529,8 @@ class EntryTestCase(TestCase):
 			second_source_name,
 			self.source_link,
 			self.article_title,
-			self.author_list,
 			self.publication_date,
+			self.author_list,
 			self.map_body,
 			self.map_scale
 		)
@@ -571,7 +593,7 @@ class EntryTestCase(TestCase):
 			self.source_name,
 			self.source_link,
 			self.article_title,
-			self.publication_date,
+			'2000-01-01',
 			self.author_list,
 			self.map_body,
 			self.map_scale
@@ -585,7 +607,7 @@ class EntryTestCase(TestCase):
 			test_value,
 			self.source_link,
 			self.article_title,
-			self.publication_date,
+			'2000-01-01',
 			test_value,
 			self.map_body,
 			self.map_scale
@@ -608,7 +630,7 @@ class ArchiveTestCase(TestCase):
 		self.source_name = 'test'
 		self.source_link = 'test'
 		self.article_title = 'test'
-		self.publication_date = 'test'
+		self.publication_date = datetime.date(2000, 1, 1)
 		self.author_list = 'test'
 		self.map_body = 'test'
 		self.map_scale = None

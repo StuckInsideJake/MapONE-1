@@ -54,13 +54,13 @@ class UserView(APIView):
                     new_password = request.query_params.get('new_password')
 
                     # if new password given
-                    if new_password:
-                        # change password
-                        response = user_class.change_password(user_id, new_password)
-                    
-                    # param error
-                    else:
+                    if not new_password:
+                        # param error
                         return Response(None, status=status.HTTP_400_BAD_REQUEST)
+                    
+                    # change password
+                    response = user_class.change_password(user_id, new_password)
+
                 else:
                     # delete user
                     response = user_class.delete_user(user_id)
@@ -102,7 +102,23 @@ class EntryView(APIView):
             keyword = request.query_params.get('keyword')
 
             # search database for keyword
+            if not keyword:
+                # param error
+                return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
             response = entry_class.search_keyword(keyword)
+
+        elif action == FILTER_YEAR:
+            # get year params
+            first_year = request.query_params.get('first_year')
+            second_year = request.query_params.get('second_year')
+
+            # search database for year range
+            if not first_year or not second_year:
+                # param error
+                return Response(None, status=status.HTTP_400_BAD_REQUEST)
+            
+            response = entry_class.filter_year(first_year, second_year)
 
         # invalid action
         else:
@@ -143,7 +159,7 @@ class ArchiveView(APIView):
             if action == CREATE_ARCHIVE:
                 # check necessary params
                 if not keyword or not frequency:
-                    # incorrect params error
+                    # param error
                     return Response(None, status=status.HTTP_400_BAD_REQUEST)
                 
                 # create archive
@@ -181,13 +197,12 @@ class ArchiveView(APIView):
                     new_frequency = request.query_params.get('new_frequency')
 
                     # update frequency
-                    if new_frequency:
-                        archive_class.update_frequency(archive_id, new_frequency)
-
-                    # param error
-                    else:
+                    if not new_frequency:
+                        # param error
                         return Response(None, status=status.HTTP_400_BAD_REQUEST)
-                
+
+                    archive_class.update_frequency(archive_id, new_frequency)
+
                 # operation success
                 response = SUCCESS
 

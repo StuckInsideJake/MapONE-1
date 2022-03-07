@@ -4,7 +4,7 @@ from mapone_api.constants import *
 from django.core.mail import send_mail
 from mapone.settings import DEFAULT_FROM_EMAIL
 import requests
-from email_validator import validate_email, EmailNotValidError
+#from email_validator import validate_email, EmailNotValidError
 
 # user class
 class UserClass:
@@ -115,14 +115,15 @@ class UserClass:
 
 	# verifies new email address
 	def verify_email_address(self, email_address):
-		# check if email address is valid
-		try:
-			validate_email(email_address)
-			return True
+		# # check if email address is valid
+		# try:
+		# 	validate_email(email_address)
+		# 	return True
 
-		# error
-		except EmailNotValidError:
-			return False
+		# # error
+		# except EmailNotValidError:
+		# 	return False
+		return True
 
 	# verifies new password
 	def verify_password(self, password):

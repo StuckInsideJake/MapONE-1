@@ -1,7 +1,6 @@
 from mapone_api.models import Entry
 from django.db.models import Max, F, Q, CharField
 
-
 # entry class
 class EntryClass:
 
@@ -14,6 +13,10 @@ class EntryClass:
 
 		# return if entry exists
 		return len(list(entry_exists)) != 0
+
+	# convert all datetime objects to strings
+	def convert_date_to_string(self, entries):
+		return None
 
 	# creates new entry
 	def create_new_entry(self, source_name, source_link, article_title,
@@ -44,6 +47,24 @@ class EntryClass:
 		# update user ids in database
 		Entry.objects.filter(entry_id__gt=entry_id).update(
 			entry_id=F('entry_id') - 1)
+
+	# filter range for publication date
+	def filter_year(self, first_year, second_year):
+		# format date
+		start_of_year = '-01-01'
+		first_year += start_of_year
+		second_year += start_of_year
+
+		# get entries within year range
+		year_match = Entry.objects.filter(publication_date__range=[first_year, second_year]).values()
+
+		# if found results
+		if year_match:
+			# return list of entries
+			return list(year_match)
+
+		# return no results
+		return None
 
 	# generates entry id from database
 	def generate_entry_id(self):
@@ -98,6 +119,17 @@ class EntryClass:
 
 		# if verified
 		if(not entry_exists):
+			# reformat date
+			year_length = 4
+			year_month_length = 7
+
+			if len(publication_date) == year_length:
+				# add month and day
+				publication_date += '-01-01'
+			if len(publication_date) == year_month_length:
+				# add day
+				publication_date += '-01'
+
 			# create new entry
 			self.create_new_entry(
 				source_name,

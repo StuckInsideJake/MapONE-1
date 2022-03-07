@@ -1,0 +1,53 @@
+user api (url = website/user/):
+
+	action: CREATE_USER
+		necessary params: action, email_address, password
+		note: action = 0
+
+	action: LOGIN
+		necessary params: action, email_address, password
+		note: action = 1
+
+	action: CHANGE_PASSWORD
+		necessary params: action, email_address, password, new_password
+		note: action = 2
+
+	action: DELETE_USER
+		necessary params: action, email_address, password
+		note: action = 3
+
+entry api (url = website/entry/):
+
+	action: MAIN_PAGE
+		necessary params: action
+		note: action = 0
+
+	action: SEARCH_KEYWORD
+		necessary params: action, keyword
+		note: action = 1
+
+	action: FILTER_YEAR
+		necessary params: action, first_year, second_year
+		note: action = 0
+		note: if filter is for 1 year, first_year and second_year should be equal
+
+archive api (url = website/archive/):
+
+	action: CREATE_ARCHIVE
+		necessary params: action, email_address, password, keyword, frequency
+		note: action = 0
+		note: frequency has to be 'daily', 'week', 'biweek', or 'month'
+
+	action: DISPLAY_USER_ARCHIVES
+		necessary params: action, email_address, password
+		note: action = 1
+		note: to return entries pulled from archive, use action SEARCH_KEYWORD using the keyword saved in the archive
+
+	action: DELETE_ARCHIVE
+		necessary params: action, email_address, password, keyword
+		note: action = 2
+
+	action: UPDATE_FREQUENCY
+		necessary params: action, email_address, password, keyword, new_frequency
+		note: action = 3
+		note: frequency has to be 'daily', 'week', 'biweek', or 'month'

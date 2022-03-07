@@ -9,6 +9,7 @@ DELETE_USER = 3
 # entry constants
 MAIN_PAGE = 0
 SEARCH_KEYWORD = 1
+FILTER_YEAR = 2
 
 # archive constants
 CREATE_ARCHIVE = 0
