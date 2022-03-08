@@ -187,21 +187,16 @@ def abstract_database_writer(abstract_page_url, title, author, body, abstracts_l
 	abstract_database_writer_start_status_key = "Writing " + title + " by " + author + " to disc"
 	status_logger(status_logger_name, abstract_database_writer_start_status_key)
 
-	body = keywords_to_search
+	body = keywords_to_search.split(' ', 1)[0]
 	
 	abstracts_csv_log = open(abstracts_log_name + '.csv', 'a')
 	abstracts_txt_log = open(abstracts_log_name + '.txt', 'a')
-	abstracts_csv_log.write("Title: " + title)
-	abstracts_csv_log.write('\n')
-	abstracts_csv_log.write("Author: " + author)
-	abstracts_csv_log.write('\n')
-	abstracts_csv_log.write("Date: " + abstract_date)
-	abstracts_csv_log.write('\n')
-	abstracts_csv_log.write("Scale: ")
-	abstracts_csv_log.write('\n')
-	abstracts_csv_log.write("Area/Body: " + body)
-	abstracts_csv_log.write('\n')
-	abstracts_csv_log.write("URL: " + abstract_page_url)
+	abstracts_csv_log.write("Springer, " + abstract_page_url)
+	abstracts_csv_log.write(", " + title)
+	abstracts_csv_log.write(", " + abstract_date)
+	abstracts_csv_log.write(", (" + author + ")")
+	abstracts_csv_log.write(", " + body)
+	abstracts_csv_log.write(", ")
 	abstracts_csv_log.write('\n')
 	abstracts_csv_log.write('\n'+'\n')
 	abstracts_txt_log.close()
@@ -262,7 +257,7 @@ def author_scraper(abstract_soup, status_logger_name):
 
 	# Converts author names to a findAll() list and then concatinates into a string for storage
 	author = ', '.join(str(author) for author in [authorElement.text 
-	for authorElement in abstract_soup.findAll('a', {'data-test': 'author-name'})])
+	for authorElement in abstract_soup.findAll('a', {'data-test': 'author-name'}, limit = 3)])
 
 	author_scraper_end_status_key = "Scraped the author(s) name: " + str(author)
 	status_logger(status_logger_name, author_scraper_end_status_key)
@@ -277,13 +272,13 @@ def title_scraper(abstract_soup, status_logger_name):
 	# Retrieves the title of the text even if an AttributeError arises
 	try:
 		title = str(abstract_soup.find('h1', {'class':'c-article-title'}).text.encode('utf-8'))[1:]
-		# In case title is mislabeled, check more of publication for title tag
+	# In case title is mislabeled, check more of publication for title tag
 	except AttributeError:
 		try:
 			title = str(abstract_soup.find('h1',{'class':'ChapterTitle'}).text.encode('utf-8'))[1:]
 		except AttributeError:
 			try:
-				title = (abstract_soup.find('span', {'class':'JournalTitle'}).text)
+				title = str(abstract_soup.find('span', {'class':'JournalTitle'}).text.encode('utf-8'))[1:]
 			except AttributeError:
 				title = "Title not available"
 
@@ -388,7 +383,7 @@ def scraper_main(keywords_to_search, abstracts_log_name, status_logger_name):
 if __name__ == '__main__':
 	# Abstracts containing these keywords will be scraped from Springer
 	'''INSERT KEYWORDS HERE'''
-	keywords_to_search = "Saturn topography"
+	keywords_to_search = "Titan atmosphere POSEIDON"
 
     # References a separate LOG folder that holds abstract names and status of each one
 	abstracts_log_name, status_logger_name = pre_processing(keywords_to_search)
