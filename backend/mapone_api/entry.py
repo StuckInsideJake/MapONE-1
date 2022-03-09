@@ -21,6 +21,7 @@ class EntryClass:
 	# creates new entry
 	def create_new_entry(self, source_name, source_link, article_title,
 		publication_date, author_list, map_body, map_scale):
+
 		# generate entry id
 		entry_id = self.generate_entry_id()
 

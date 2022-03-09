@@ -14,6 +14,11 @@ from rest_framework.test import APIClient
 
 import datetime
 
+from mapone_api.web_scraper.scraperV2 import main
+
+class WebScraperTestCase(TestCase):
+	def test_web_scraper(self):
+		main()
 
 # tests user, entry, and archive APIs
 class APITestCase(TestCase):
@@ -30,7 +35,6 @@ class APITestCase(TestCase):
 		self.user_url = '/user/'
 		self.entry_url = '/entry/'
 		self.archive_url = '/archive/'
-		# use own test email
 		self.email_address = ''
 		self.password = 'password1?'
 
@@ -321,7 +325,6 @@ class UserTestCase(TestCase):
 
 		# class variables
 		self.user_id = 1
-		# use own test email
 		self.email_address = ''
 		self.password = 'password1!'
 
@@ -349,14 +352,12 @@ class UserTestCase(TestCase):
 		result = self.user_class.check_existing_user(self.email_address)
 		self.assertEqual(result, self.user_id)
 
-		# use own test email
 		test_email = ''
 		result = self.user_class.check_existing_user(test_email)
 		self.assertEqual(result, None)		
 
 	# test create new user function
 	def test_create_new_user(self):
-		# use own test email
 		test_email = ''
 		test_password = 'password3!'
 		self.user_class.create_new_user(test_email, test_password)
@@ -648,7 +649,6 @@ class ArchiveTestCase(TestCase):
 
 		# create user object
 		self.user_id = 1
-		# use own test email
 		self.email_address = ''
 		self.password = 'password1!'
 		user_class = UserClass()

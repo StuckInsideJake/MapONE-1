@@ -5,6 +5,7 @@ from mapone_api.models import Entry
 
 import csv
 
+from mapone_api.web_scraper.scraperV2 import main
 
 class Command(BaseCommand):
 
@@ -35,3 +36,6 @@ class Command(BaseCommand):
 					line[5],
 					line[6]
 				)
+
+		# run web scraper
+		main()
