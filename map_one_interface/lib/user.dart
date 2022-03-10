@@ -118,7 +118,7 @@ class _userState extends State<user>
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage(randomlySelectPlanetImage(photoArr)),
-                        fit: BoxFit.cover
+                        fit: BoxFit.fitWidth
                     )
                 ),
                 child: Container(
@@ -126,25 +126,11 @@ class _userState extends State<user>
                   height: 200,
                   child: Container(
                     alignment: Alignment(0.0,2.5),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.greenAccent,
-                      child: Text('8675309'),
-                      radius: 60.0,
-                    ),
                   ),
                 ),
               ),
               SizedBox(
                 height: 60,
-              ),
-              Text(
-                "user id: 8675309",
-                 style: TextStyle(
-                  fontSize: 25.0,
-                  color:Colors.blueGrey,
-                  letterSpacing: 2.0,
-                  fontWeight: FontWeight.w400
-              ),
               ),
               SizedBox(
                 height: 10,
@@ -206,53 +192,16 @@ class _userState extends State<user>
                       Expanded(
                         child: Column(
                           children: [
-                            Text( "User ID:  ",
-                              style: TextStyle(
-                                  color: Colors.blueAccent,
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.w600
-                              ),),
-                            SizedBox(
-                              height: 7,
-                            ),
-                            Text("User ID: 8675309",
-                              style: TextStyle(
-                                  color: Colors.blueAccent,
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.w300
-                              ),)
+
                           ],
                         ),
                       ),
-                      Expanded(
-                        child:
-                        Column(
-                          children: [
-                            Text("Email:",
-                              style: TextStyle(
-                                  color: Colors.blueAccent,
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.w600
-                              ),),
-                            SizedBox(
-                              height: 7,
-                            ),
-                            Text("Example@usgs.gov",
-                              style: TextStyle(
-                                  color: Colors.blueAccent,
-                                  fontSize: 22.0,
-                                  fontWeight: FontWeight.w300
-                              ),)
-                          ],
-                        ),
-                      ),
+
                     ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: 50,
-              ),
+
             ],
 
           //],

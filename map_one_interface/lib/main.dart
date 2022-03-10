@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:async_builder/async_builder.dart';
 import 'package:http_requests/http_requests.dart';
 import 'package:map_one_interface/backendCalls.dart';
 import 'package:map_one_interface/user.dart';
-
+import 'backendCalls.dart';
 import 'data.dart';
 
 Icon SearchIcon = const Icon(Icons.search);
@@ -14,6 +16,8 @@ Widget Bar = const Text("Enter the query for the desired publication");
 
 
 void main() {
+
+
   runApp(MapOne());
 }
 
@@ -24,9 +28,8 @@ class MapOne extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MapOne',
-      theme: ThemeData(
+      theme: ThemeData( colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo)
 
-        primaryColor: Colors.black,
       ),
       home: MapOneHomePage(title: 'MapOne Demo'),
     );
@@ -44,17 +47,30 @@ class MapOneHomePage extends StatefulWidget {
 
     }
 
-  String title = "Map One Alpha";
   @override
+  String title = "Map One Alpha";
   _MapOneHomePageState createState() => _MapOneHomePageState();
+
+
 }
 
   class _MapOneHomePageState extends State<MapOneHomePage> {
 
-  static String title = "Map One Alpha";
+    backEndCalls  backendObjk = new backEndCalls("Map One Alpha");
+    List <dynamic>  backendObj = new backEndCalls("Map One Alpha").entryIdArr;
 
-  var backendConsume = new backEndCalls(title).consumeApi();
-  DataRow dataRowObj = new data(title).populateDataRows(title);
+    //backendObj;
+
+
+
+    //backendObj.elementAt(0);
+
+
+
+    //var j = backendObj;
+
+
+
 
 
   @override
@@ -116,8 +132,7 @@ class MapOneHomePage extends StatefulWidget {
               // new one must be pushed onto the build stack
               Navigator.pop(context);
               Navigator.push(context, MaterialPageRoute(builder:
-                  (context) => MapOne() ));
-
+                  (context) => MapOne()));
             },
             icon:HomeIcon,
           )
@@ -131,7 +146,7 @@ class MapOneHomePage extends StatefulWidget {
             DataTable(
               columns: const <DataColumn>[
                 DataColumn(
-                  label: Text("Source",
+                  label: Text("Entry",
                   style: TextStyle(fontStyle: FontStyle.italic),
 
                   ),
@@ -148,7 +163,7 @@ class MapOneHomePage extends StatefulWidget {
                   ),
                 ),
                 DataColumn(
-                  label: Text("Scale",
+                  label: Text("",
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
                 ),
@@ -158,21 +173,27 @@ class MapOneHomePage extends StatefulWidget {
                   ),
                 ),
                 DataColumn(
-                  label: Text("Publication Info",
+                  label: Text("Publisher",
                     style: TextStyle(fontStyle: FontStyle.italic),
                   ),
                 ),
               ],
-
               rows:  <DataRow>
                   [
-                   dataRowObj,
-                   dataRowObj,
-                   dataRowObj,
-                   dataRowObj,
-                   dataRowObj,
-                  ],
+                    //backendObj.elementAt(0),
 
+
+                  ],
+            ),
+            Card(
+                margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 8.0),
+                elevation: 2.0,
+                child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12,horizontal: 30),
+                    child: Text("", style: TextStyle(
+                        letterSpacing: 2.0,
+                        fontWeight: FontWeight.w300
+                    ),))
             ),
             Card(
                 margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 8.0),
@@ -194,6 +215,5 @@ class MapOneHomePage extends StatefulWidget {
         tooltip: 'This page allows the user to save ',
         child: Icon(Icons.info),
       ),
-
     );}
 }
