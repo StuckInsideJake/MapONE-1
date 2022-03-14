@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 
 
-class backEndCalls extends MapOneHomePage
+/*class backEndCalls extends MapOneHomePage
 {
   List entryIdArr = [];
   List SourceNameArr = [];
@@ -16,6 +16,7 @@ class backEndCalls extends MapOneHomePage
   List TitleArr = [];
   List AuthorList = [];
   List GlobalDataRowList = [];
+
 
 
   var globalPtr;
@@ -38,7 +39,7 @@ class backEndCalls extends MapOneHomePage
 
 
    getApiEntries()
-  async
+   async
      {
 
       Response publication = await HttpRequests.get("https://mapone-api.herokuapp.com/entry/?action=0");
@@ -51,7 +52,7 @@ class backEndCalls extends MapOneHomePage
 
 
 
-      //jsonDecode(publicationContent);
+      jsonDecode(publicationContent);
 
       serializeApiEntries(publicationContent);
      }
@@ -59,7 +60,7 @@ class backEndCalls extends MapOneHomePage
      serializeApiEntries(pubcontent)
          {
 
-          //pubcontent = globalPtr;
+          pubcontent = globalPtr;
 
            String responseStr = pubcontent;
 
@@ -67,32 +68,34 @@ class backEndCalls extends MapOneHomePage
            entryIdArr.add(pubcontent);
            print(entryIdArr.elementAt(0));
 
-           //while(i < responseStr.length)
-           /*     {
-                 if(responseStr[i] == "{")
-                   {
-                     print(responseStr[i+12]);
-                     entryIdArr.add(responseStr[i+12]);
-                     print(responseStr.substring(i+28, i+38));
-                     print(responseStr.substring(i+125, i+140));
-                     SourceNameArr.add(responseStr.substring(i+28, i+38));
-                     SourceListArr.add(responseStr.substring(i+54, i+120));
-                     TitleArr.add(responseStr.substring(i+140, i+200));
+// comment out if no work
+          // while(i < responseStr.length)
+           //    {
+           //      if(responseStr[i] == "{")
+            //       {
+              //       print(responseStr[i+12]);
+                //     entryIdArr.add(responseStr[i+12]);
+                  //   print(responseStr.substring(i+28, i+38));
+                //     print(responseStr.substring(i+125, i+140));
+                //     SourceNameArr.add(responseStr.substring(i+28, i+38));
+                 //    SourceListArr.add(responseStr.substring(i+54, i+120));
+                  //   TitleArr.add(responseStr.substring(i+140, i+200));
 
-                   }
-                 i++;
+                   //}
+                 //i++;
                 }
 
-            */
 
-              }
+
+            //  }
           //populateDataTable(entryIdArr, SourceNameArr, SourceListArr, TitleArr);
 
 
 
      }
-  // Function: populateDataRows
-  // approach: returns DataRow object with parameters as values
+     //comment out if no work
+   //Function: populateDataRows
+   //approach: returns DataRow object with parameters as values
   //link, body, scale, author, publicationData
   populateDataRows()
   {
@@ -109,7 +112,7 @@ class backEndCalls extends MapOneHomePage
 
     return dataR;
 
-  }
+  }*/
 
 
 
