@@ -7,81 +7,99 @@ import 'package:http_requests/http_requests.dart';
 import 'package:map_one_interface/backendCalls.dart';
 import 'package:map_one_interface/user.dart';
 import 'backendCalls.dart';
-import 'data.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'entry.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 Icon SearchIcon = const Icon(Icons.search);
 Icon FaceIcon = const Icon(Icons.face);
 Icon HomeIcon = const Icon(Icons.home);
 Widget Bar = const Text("Enter the query for the desired publication");
+
 // setting list to a string then spliting it into a new list on the main to call
 // overflows for some reason
   // String entryIdArr = backEndCalls(entryIdArr) as String;
  //List EntryIdArr = entryIdArr.split(',');
 
-class backEndCalls extends MapOneHomePage
-{
-  var globalPtr;
-  String title = "MapOne";
-  bool verboseFlag = true;
-  //String inData;
-
-    backEndCalls(this.title) : super(title: title)
-    {
-      getApiEntries();
-    }
-
-    backEndCalls1()
-    {
-      getApiEntries();
-    }
 
 
-
-    getApiEntries()
+    Future getApiEntries()
     async
     {
       // get request
       var response = await http.get(Uri.parse("https://mapone-api.herokuapp.com/entry/?action=0"));
 
-      // store date into list type
-      List<Entry> entries = new List<Entry>.from(json.decode(response.body).map(
-              (data) => Entry.fromJson(data)));
+      // store
+      var decodedRes = json.decode(response.body).cast<Map<String,dynamic>>();
 
-      // declare all lists here -> source name, link, author, etc.
-      List body_list = [];
+      List<Entry> responseList = await decodedRes.map<Entry>((json)=>
+          Entry.fromJson(json)).toList();
 
-      // add API data to lists
-      entries.forEach((element){body_list.add(element.map_body);});
+      return responseList;
 
-      // test
-      print(body_list);
-
-      // TODO: populate data table
     }
-  }
+
+
+   class EntryDataGridSource extends DataGridSource
+      {
+        EntryDataGridSource(this.entryList)
+         {
+          buildDataGridRow();
+         }
+        late List<DataGridRow> dataGridRows;
+        late List<Entry> entryList;
+
+
+        @override
+        DataGridRowAdapter? buildRow(DataGridRow row)
+         {
+           return DataGridRowAdapter(cells: [
+             Container(
+               child: Text(row.getCells()[0].value.toString();
+               overflow: TextOverflow.ellipsis,
+               ),
+               alignment: Alignment.centerLeft,
+               padding: EdgeInsets.all(8.0),
+             )
+           ] );
+         }
+       List<DataGridRow> get rows => dataGridRows;
+
+       void buildDataGridRow()
+         {
+          dataGridRows = entryList.map<DataGridRow>((dataGridRow){
+            return DataGridRow(cells: [
+              DataGridCell(columnName: 'entryID', value: dataGridRow.entry_id)
+            ]);
+            }).toList(growable: false);
+          }
+
+      }
+
+
 
   //Function: populateDataRows
   //approach: returns DataRow object with parameters as values
   //link, body, scale, author, publicationData
-  populateDataRows()
+  populateDataRow()
   {
     var dataR;
+
+
     dataR = DataRow(
         cells: <DataCell>[
+          DataCell(Text("")),
           DataCell(Text("Test")),
-          DataCell(Text("Test")),
-          DataCell(Text("Test")),
+          DataCell(Text("")),
           DataCell(Text("Test")),
           DataCell(Text("Test")),
           DataCell(Text("Test")),]
     );
 
     return dataR;
-
   }
+
 
 void main() {
 
@@ -120,22 +138,10 @@ class MapOneHomePage extends StatefulWidget {
   _MapOneHomePageState createState() => _MapOneHomePageState();
 
 
+
 }
 
   class _MapOneHomePageState extends State<MapOneHomePage> {
-
-    backEndCalls  backendObjk = new backEndCalls("Map One Alpha");
-    //List <dynamic>  backendObj = new backEndCalls("Map One Alpha").entryIdArr;
-
-    //backendObj;
-
-
-
-    //backendObj.elementAt(0);
-
-
-
-    //var j = backendObj;
 
 
 
@@ -248,27 +254,17 @@ class MapOneHomePage extends StatefulWidget {
               ],
               rows:  <DataRow>
                   [
-                    //backendObj.elementAt(0),
-
+                    populateDataRow()
 
                   ],
             ),
+
             Card(
                 margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 8.0),
                 elevation: 2.0,
                 child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 12,horizontal: 30),
-                    child: Text("", style: TextStyle(
-                        letterSpacing: 2.0,
-                        fontWeight: FontWeight.w300
-                    ),))
-            ),
-            Card(
-                margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 8.0),
-                elevation: 2.0,
-                child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12,horizontal: 30),
-                    child: Text("Save selected publication to account",style: TextStyle(
+                    child: Text(" ",style: TextStyle(
                         letterSpacing: 2.0,
                         fontWeight: FontWeight.w300
                     ),))
