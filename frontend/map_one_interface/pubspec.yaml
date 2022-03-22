@@ -27,6 +27,7 @@ dependencies:
   dio: ^4.0.3
   http_requests: ^1.2.0
   async_builder: ^1.2.0
+  intl: ^0.17.0
 
 
 
