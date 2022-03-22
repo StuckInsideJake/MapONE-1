@@ -6,6 +6,8 @@ import 'package:map_one_interface/main.dart';
 import 'package:http_requests/http_requests.dart';
 import 'dart:math';
 
+import 'loginPage.dart';
+
 class user extends StatefulWidget
 {
 
@@ -98,7 +100,7 @@ class _userState extends State<user>
             onPressed:
                 ()
             {
-              // in order to change view, first the current
+              //in order to change view, first the current
               // rendered context must be popped and then the
               // new one must be pushed onto the build stack
               Navigator.pop(context);
@@ -107,7 +109,16 @@ class _userState extends State<user>
 
             },
             icon:HomeIcon,
-          )
+          ),
+          IconButton(
+              icon: Icon(Icons.vpn_key_outlined),
+              onPressed: (){
+                setState(() {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => login() ));
+                });
+              }
+          ),
         ], // Actions
         centerTitle: true,
       ),

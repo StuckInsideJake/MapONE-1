@@ -15,10 +15,12 @@ import 'entry.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import "package:intl/intl.dart";
 
+import 'loginPage.dart';
+
 Icon SearchIcon = const Icon(Icons.search);
 Icon FaceIcon = const Icon(Icons.face);
 Icon HomeIcon = const Icon(Icons.home);
-Widget Bar = const Text("Enter the query for the desired publication");
+Widget Bar = const Text(" MapOne ");
 
 // setting list to a string then spliting it into a new list on the main to call
 // overflows for some reason
@@ -32,16 +34,65 @@ Widget Bar = const Text("Enter the query for the desired publication");
     }
     List<GridColumn> getColumns()
       {
-       return <GridColumn>[
-         GridTextColumn(columnName: "Entry ID",
-         width: 70,
-         label: Container(
-           padding: EdgeInsets.all(8),
-           alignment: Alignment.centerLeft,
-           child: Text("Entry ID",
-           overflow: TextOverflow.clip, softWrap: true )
+        List<GridColumn> columns;
+       columns = <GridColumn>[
+         GridColumn(columnName: "Entry ID",
+           width: 70,
+           label: Container(
+               padding: EdgeInsets.all(8),
+               alignment: Alignment.center,
+               child: Text("Entry ID",
+                   overflow: TextOverflow.clip, softWrap: true )
+           ),
          ),
-         )];
+         GridColumn(columnName: "Body ",
+           width: 70,
+           label: Container(
+               padding: EdgeInsets.all(8),
+               alignment: Alignment.center,
+               child: Text("Body",
+                   overflow: TextOverflow.clip, softWrap: true )
+           ),
+         ),
+         GridColumn(columnName: "Article Title",
+           width: 150,
+           label: Container(
+               padding: EdgeInsets.all(8),
+               alignment: Alignment.center,
+               child: Text("Article Title",
+                   overflow: TextOverflow.visible, softWrap: true )
+           ),
+         ),
+         GridColumn(columnName: "Publication Date",
+           width: 70,
+           label: Container(
+               padding: EdgeInsets.all(8),
+               alignment: Alignment.center,
+               child: Text("Publication Date",
+                   overflow: TextOverflow.clip, softWrap: true )
+           ),
+         ),
+         GridColumn(columnName: "Author(s)",
+           width: 70,
+           label: Container(
+               padding: EdgeInsets.all(8),
+               alignment: Alignment.center,
+               child: Text("Author(s)",
+                   overflow: TextOverflow.clip, softWrap: true )
+           ),
+         ),
+         GridColumn(columnName: "URL",
+           width: 150,
+           label: Container(
+               padding: EdgeInsets.all(8),
+               alignment: Alignment.center,
+               child: Text("URL",
+                   overflow: TextOverflow.clip, softWrap: true )
+           ),
+         ),
+
+       ];
+       return columns;
       }
     Future getApiEntries()
     async
@@ -76,7 +127,42 @@ Widget Bar = const Text("Enter the query for the desired publication");
                child: Text(row.getCells()[0].value.toString(),
                overflow: TextOverflow.ellipsis,
                ),
-               alignment: Alignment.centerLeft,
+               alignment: Alignment.center,
+               padding: EdgeInsets.all(8.0),
+             ),
+             Container(
+               child: Text(row.getCells()[1].value.toString(),
+                 overflow: TextOverflow.ellipsis,
+               ),
+               alignment: Alignment.center,
+               padding: EdgeInsets.all(8.0),
+             ),
+             Container(
+               child: Text(row.getCells()[2].value.toString(),
+                 overflow: TextOverflow.visible,
+               ),
+               alignment: Alignment.center,
+               padding: EdgeInsets.all(8.0),
+             ),
+             Container(
+               child: Text(row.getCells()[3].value.toString(),
+                 overflow: TextOverflow.visible,
+               ),
+               alignment: Alignment.center,
+               padding: EdgeInsets.all(8.0),
+             ),
+             Container(
+               child: Text(row.getCells()[4].value.toString(),
+                 overflow: TextOverflow.visible,
+               ),
+               alignment: Alignment.center,
+               padding: EdgeInsets.all(8.0),
+             ),
+             Container(
+               child: Text(row.getCells()[5].value.toString(),
+                 overflow: TextOverflow.visible,
+               ),
+               alignment: Alignment.center,
                padding: EdgeInsets.all(8.0),
              )
            ] );
@@ -87,37 +173,21 @@ Widget Bar = const Text("Enter the query for the desired publication");
          {
           dataGridRows = entryList.map<DataGridRow>((dataGridRow){
             return DataGridRow(cells: [
-              DataGridCell(columnName: 'entryID', value: dataGridRow.entry_id)
+              DataGridCell(columnName: 'entryID', value: dataGridRow.entry_id),
+              DataGridCell(columnName: 'Body', value: dataGridRow.map_body),
+              DataGridCell(columnName: 'Title', value: dataGridRow.article_title),
+              DataGridCell(columnName: 'Publication date', value: dataGridRow.publication_date),
+              DataGridCell(columnName: 'Publication Authors', value: dataGridRow.author_list),
+              DataGridCell(columnName: 'URL', value: dataGridRow.source_link),
             ]);
             }).toList(growable: false);
           }
 
       }
 
-  //Function: populateDataRows
-  //approach: returns DataRow object with parameters as values
-  //link, body, scale, author, publicationData
-  populateDataRow()
-  {
-    var dataR;
-
-    dataR = DataRow(
-        cells: <DataCell>[
-          DataCell(Text("")),
-          DataCell(Text("Test")),
-          DataCell(Text("")),
-          DataCell(Text("Test")),
-          DataCell(Text("Test")),
-          DataCell(Text("Test")),]
-    );
-
-    return dataR;
-  }
 
 
 void main() {
-
-
   runApp(MapOne());
 }
 
@@ -131,7 +201,7 @@ class MapOne extends StatelessWidget {
       theme: ThemeData( colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo)
 
       ),
-      home: MapOneHomePage(title: 'MapOne Demo'),
+      home: MapOneHomePage(title:'MapOne Demo'),
     );
   }
 }
@@ -152,7 +222,6 @@ class MapOneHomePage extends StatefulWidget {
   _MapOneHomePageState createState() => _MapOneHomePageState();
 
 
-
 }
 
   class _MapOneHomePageState extends State<MapOneHomePage> {
@@ -160,7 +229,68 @@ class MapOneHomePage extends StatefulWidget {
   @override
   Widget build(BuildContext context)
      {
-      return SafeArea(child: Scaffold(body: FutureBuilder(
+      return SafeArea(child:
+
+        Scaffold( appBar:
+        AppBar(
+          title: Bar,
+          automaticallyImplyLeading: false,
+          actions:
+          [
+            IconButton( icon: SearchIcon,
+            onPressed: () {
+              setState(() {
+                if(SearchIcon.icon == Icons.search)
+                  {
+                   SearchIcon = const Icon(Icons.cancel);
+                   Bar = const ListTile(leading:
+                   Icon(
+                     Icons.search,
+                     color: Colors.white,
+                     size: 28
+                   ));
+                  }
+                else
+                  {
+                   SearchIcon = const Icon(Icons.search);
+                   Bar = const Text("Search");
+                  }
+              });
+        } ),
+            // button for user page
+            IconButton( icon: Icon(Icons.face),
+              onPressed: (){
+               setState(() {
+                 Navigator.pop(context);
+                 Navigator.push(context, MaterialPageRoute(builder:
+                     (context) => user() ));
+               });
+              },
+          ),
+           IconButton(
+               icon: Icon(Icons.home),
+               onPressed: (){
+                 setState(() {
+                   Navigator.pop(context);
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => MapOne() ));
+                 });
+               }
+           ),
+            IconButton(
+                icon: Icon(Icons.vpn_key_outlined),
+                onPressed: (){
+                  setState(() {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => login() ));
+                  });
+                }
+            ),
+
+          ],
+
+        ),
+        // Publication Data
+        body: FutureBuilder(
         future: getEntryDataSource(),
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
           return snapshot.hasData
